@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ThinkCMF 5.0.180123 正式版
 ===============
 
@@ -374,3 +375,7 @@ https://www.kancloud.cn/thinkcmf/doc/327443
 * 完善前台模板
 
 
+=======
+# backstage.sanyeyang.com
+后台
+>>>>>>> 470c409359775455dbfe9f1ce65b88d157248e61
