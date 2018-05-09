@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{$siteInfo.site_seo_title}</title>
+    <meta name="keywords" content="{$siteInfo.site_seo_keywords}"/>
+    <meta name="description" content="{$siteInfo.site_seo_description}">
+    <meta name="author" content="PengBLOG">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <!-- Set render engine for 360 browser -->
+    <meta name="renderer" content="webkit"> <!-- No Baidu Siteapp-->
+    <meta http-equiv="Cache-Control" content="no-siteapp"/> <!-- HTML5 shim for IE8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="{$server_name}/js/html5shiv.js"></script> <![endif]-->
+    <link href="{$server_name}/css/theme.min.css" rel="stylesheet">
+    <link href="{$server_name}/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link href="{$server_name}/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <!--[if IE 7]>
+    <link rel="stylesheet" href="{$server_name}/css/font-awesome-ie7.min.css">
+    <![endif]-->
+    <link href="{$server_name}/css/style.css" rel="stylesheet">
+    <style>
+        #backtotop {
+            position: fixed;
+            bottom: 50px;
+            right: 20px;
+            display: none;
+            cursor: pointer;
+            font-size: 50px;
+            z-index: 9999;
+        }
+
+        #backtotop:hover {
+            color: #333
+        }
+
+        #main-menu-user li.user {
+            display: none
+        }
+    </style>
+    <link href="{$server_name}/css/slippry.css" rel="stylesheet">
+    <style>
+        .caption-wraper {
+            position: absolute;
+            left: 50%;
+            bottom: 2em;
+        }
+
+        .caption-wraper .caption {
+            position: relative;
+            left: -50%;
+            background-color: rgba(0, 0, 0, 0.54);
+            padding: 0.4em 1em;
+            color: #fff;
+            -webkit-border-radius: 1.2em;
+            -moz-border-radius: 1.2em;
+            -ms-border-radius: 1.2em;
+            -o-border-radius: 1.2em;
+            border-radius: 1.2em;
+        }
+
+        @media (max-width: 767px) {
+            .sy-box {
+                margin: 12px -20px 0 -20px;
+            }
+            .caption-wraper {
+                left: 0;
+                bottom: 0.4em;
+            }
+            .caption-wraper .caption {
+                left: 0;
+                padding: 0.2em 0.4em;
+                font-size: 0.92em;
+                -webkit-border-radius: 0;
+                -moz-border-radius: 0;
+                -ms-border-radius: 0;
+                -o-border-radius: 0;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body class="body-white">
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            <a class="brand" href="/">
+                <img src="{$server_name}/images/logo.png"/>
+            </a>
+            <div class="nav-collapse collapse" id="main-menu">
+                <ul id="main-menu" class="nav">
+                    <volist name="navMenuList" id="v">
+                        <li class='li-class'>
+                            <a href='{$v.href}' target='{$v.target}'>{$v.name}</a>
+                        </li>
+                    </volist>
+                </ul>
+                <ul class="nav pull-right" id="main-menu-user">
+                    <li class="dropdown user login">
+                        <a class="dropdown-toggle user" data-toggle="dropdown" href="#">
+                            <img src="{$server_name}/images/headicon.png" class="headicon"/>
+                            <span class="user-nicename"></span><b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu pull-right">
+                            <li>
+                                <a href="/demo/user/center/index.html">
+                                    <i class="fa fa-user"></i> &nbsp;个人中心
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a href="/demo/user/index/logout.html">
+                                    <i class="fa fa-sign-out"></i> &nbsp;退出
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown user offline">
+                        <a class="dropdown-toggle user" data-toggle="dropdown" href="#">
+                            <img src="{$server_name}/images/headicon.png" class="headicon"/>登录<b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu pull-right">
+                            <li>
+                                <a href="/demo/api/oauth/login/type/sina.html">
+                                    <i class="fa fa-weibo"></i>
+                                    &nbsp;微博登录
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/demo/api/oauth/login/type/qq.html">
+                                    <i class="fa fa-qq"></i> &nbsp;QQ登录
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/demo/user/login/index.html">
+                                    <i class="fa fa-sign-in"></i> &nbsp;登录
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a href="/demo/user/register/index.html">
+                                    <i class="fa fa-user"></i> &nbsp;注册
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="pull-right">
+                    <form method="post" class="form-inline" action="#" style="margin:18px 0;">
+                        <input type="text" class="" placeholder="Search" name="keyword" value="" style="border:0;height:18px;margin-top:3px;background:#f9f9f9;"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container tc-main">
+    <ul id="homeslider" class="unstyled">
+        <volist name="slideList" id="v">
+            <li>
+                <div class="caption-wraper">
+                    <div class="caption">{$v.post_title}</div>
+                </div>
+                <a href="{$v.url}"><img src="{$v.thumbnail}" alt="{$v.post_title}"></a>
+            </li>
+        </volist>
+    </ul>
+    <div class="row">
+        <div class="span9"><h3 class="home_title">置顶推荐</h3>
+            <div class="span9" style="margin:0px;margin-left:-8px">
+                <volist name="topNewsList" id="v">
+                    <div class="span2" style="margin:0;padding:0 8px;">
+                        <div class="tc-gridbox home_muban" style="box-shadow:none;">
+                            <div class="header">
+                                <div class="item-image" style="min-height:140px;"><a href="{$v.url}"> <img src="{$v.thumbnail}" class="img-responsive img-thumbnail" alt="{$v.post_title}”" style="min-height:110px;"/> </a></div>
+                                <h4 style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;"><a href="{$v.url}">{$v.post_title}</a></h4></div>
+                        </div>
+                    </div>
+                </volist>
+            </div>
+            <h3 class="home_title">最新发布</h3>
+            <div class="">
+                <volist name="newNewsList" id="v">
+                    <div class="list-boxes">
+                        <div class="tc-gridbox list_imgs" style="box-shadow: none;overflow: hidden;">
+                            <div class="header">
+                                <img src="{$v.thumbnail}" alt="{$v.post_title}" class="img-responsive img-thumbnail">
+                            </div>
+                        </div>
+                        <div class="list_excerpt">
+                            <h2>
+                                <a href="{$v.url}">
+                                    {$v.post_title}
+                                </a>
+                            </h2>
+                            <p>
+                                {$v.post_excerpt}</p>
+                            <div>
+                                <div class="pull-right">
+                                    <div class="list-actions">
+                                        <a href="javascript:;">
+                                            <i class="fa fa-eye jian5"></i>
+                                            <span>{$v.post_hits}</span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <p class="pull-left">{$v.published_time}</p></div>
+                        </div>
+                    </div>
+                </volist>
+            </div>
+            <div class="pagination">
+                <ul></ul>
+            </div>
+        </div>
+        <div class="span3">
+            <div class="tc-box first-box">
+                <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tqf" data-cmd="tqf" title="分享到腾讯朋友"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="#" class="bds_youdao" data-cmd="youdao" title="分享到有道云笔记"></a></div>
+                <script>window._bd_share_config = {
+                    "common": {
+                        "bdSnsKey": {},
+                        "bdText": "",
+                        "bdMini": "2",
+                        "bdMiniList": false,
+                        "bdPic": "",
+                        "bdStyle": "2",
+                        "bdSize": "32"
+                    }, "share": {}
+                };
+                with (document)0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=86835285.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+            </div>
+            <div class="tc-box">
+                <div class="headtitle"><h2>热门文章</h2></div>
+                <div class="ranking">
+                    <ul class="unstyled">
+                        <volist name="hotNewsList" id="v">
+                            <if condition="$key<3">
+                                    <li class="top3">
+                                        <i>{$key+1}</i>
+                                        <a title="{$v.post_title}" href="{$v.url}">{$v.post_title}</a>
+                                    </li>
+                                <else/>
+                                    <li class="">
+                                        <i>{$key+1}</i>
+                                        <a title="{$v.post_title}" href="{$v.url}">{$v.post_title}</a>
+                                    </li>
+                            </if>
+                        </volist>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="footer">
+    <div class="links">
+        友情链接：
+        <volist name="linksList" id="v">
+            <a href="{$v.url}" target="{$v.target}">{$v.name}</a>
+        </volist>
+    </div>
+    <div class="links">
+        © 2017 pengyichen.cn, all rights reserved PengBLOG免费的个人博客。 <a href="http://www.miitbeian.gov.cn/" target="_blank"> {$siteInfo.site_icp}</a> 博主邮箱：<a href="mailto:{$siteInfo.site_admin_email}">{$siteInfo.site_admin_email}</a>
+    </div>
+</div>
+<div id="backtotop" style="margin-bottom:20px;"><i class="fa fa-arrow-circle-up"></i></div>
+<script type="text/javascript">
+    //全局变量
+    var GV = {
+        ROOT: "/demo/",
+        WEB_ROOT: "/demo/",
+        JS_ROOT: "public/js/"
+    };
+</script> <!-- Placed at the end of the document so the pages load faster -->
+<script src="{$server_name}/js/jquery.js"></script>
+<script src="{$server_name}/js/wind.js"></script>
+<script src="{$server_name}/js/bootstrap.min.js"></script>
+<script src="{$server_name}/js/frontend.js"></script>
+<script>
+    $(function () {
+        $('body').on('touchstart.dropdown', '.dropdown-menu', function (e) {
+            e.stopPropagation();
+        });
+        $("#main-menu li.dropdown").hover(function () {
+            $(this).addClass("open");
+        }, function () {
+            $(this).removeClass("open");
+        });
+        $.post("/demo/user/index/is_login.html", {}, function (data) {
+            if (data.status == 1) {
+                if (data.user.avatar) {
+                    $("#main-menu-user .headicon").attr("src", data.user.avatar.indexOf("http") == 0 ? data.user.avatar : "http://demo.pengyichen.cn/demo/data/upload/[AVATAR]".replace('[AVATAR]', data.user.avatar));
+                }
+                $("#main-menu-user .user-nicename").text(data.user.user_nicename != "" ? data.user.user_nicename : data.user.user_login);
+                $("#main-menu-user li.login").show();
+            }
+            if (data.status == 0) {
+                $("#main-menu-user li.offline").show();
+            }
+        });
+
+        (function ($) {
+            $.fn.totop = function (opt) {
+                var scrolling = false;
+                return this.each(function () {
+                    var $this = $(this);
+                    $(window).scroll(function () {
+                        if (!scrolling) {
+                            var sd = $(window).scrollTop();
+                            if (sd > 100) {
+                                $this.fadeIn();
+                            } else {
+                                $this.fadeOut();
+                            }
+                        }
+                    });
+
+                    $this.click(function () {
+                        scrolling = true;
+                        $('html, body').animate({
+                            scrollTop: 0
+                        }, 500, function () {
+                            scrolling = false;
+                            $this.fadeOut();
+                        });
+                    });
+                });
+            };
+        })(jQuery);
+
+        $("#backtotop").totop();
+    });
+</script>
+<script src="{$server_name}/js/slippry.min.js"></script>
+<script>
+    $(function () {
+        var demo1 = $("#homeslider").slippry({
+            transition: 'fade',
+            useCSS: true,
+            captions: false,
+            speed: 1000,
+            pause: 5000,
+            auto: true,
+            preload: 'visible'
+        });
+    });
+</script>
+</body>
+</html>
