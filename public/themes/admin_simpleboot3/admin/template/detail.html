@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{$categoryInfo.seo_title}</title>
-    <meta name="keywords" content="{$categoryInfo.seo_keywords}"/>
-    <meta name="description" content="{$categoryInfo.seo_description}">
+    <title>{$protalPostData.post_title}</title>
+    <meta name="keywords" content="{$protalPostData.post_keywords}"/>
+    <meta name="description" content="{$protalPostData.post_excerpt}">
     <meta name="author" content="PengBLOG">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <!-- Set render engine for 360 browser -->
     <meta name="renderer" content="webkit"> <!-- No Baidu Siteapp-->
-    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/> <!-- HTML5 shim for IE8 support of HTML5 elements -->
     <!--[if lt IE 9]>
-    <script src="{$server_name}/js/html5shiv.js"></script> <![endif]-->
+    <script src="{$server_name}/css/html5shiv.js"></script> <![endif]-->
     <link href="{$server_name}/css/theme.min.css" rel="stylesheet">
     <link href="{$server_name}/css/bootstrap-responsive.min.css" rel="stylesheet">
     <link href="{$server_name}/css/font-awesome.min.css" rel="stylesheet" type="text/css">
@@ -40,8 +41,21 @@
             display: none
         }
     </style>
+    <style>
+        #article_content img {
+            height: auto !important
+        }
+
+        #article_content {
+            word-wrap: break-word;
+        }
+
+        .btn {
+            margin-top: 33px;
+        }
+    </style>
 </head>
-<body>
+<body class="">
 <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container"><a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </a> <a class="brand" href="/"><img src="{$server_name}/images/logo.png"/></a>
@@ -65,8 +79,7 @@
                     <li class="dropdown user offline"><a class="dropdown-toggle user" data-toggle="dropdown" href="#">
                         <img src="{$server_name}/images/headicon.png" class="headicon"/>登录<b class="caret"></b> </a>
                         <ul class="dropdown-menu pull-right">
-                            <li><a href="/demo/api/oauth/login/type/sina.html"><i class="fa fa-weibo"></i>
-                                &nbsp;微博登录</a></li>
+                            <li><a href="/demo/api/oauth/login/type/sina.html"><i class="fa fa-weibo"></i>&nbsp;微博登录</a></li>
                             <li><a href="/demo/api/oauth/login/type/qq.html"><i class="fa fa-qq"></i> &nbsp;QQ登录</a>
                             </li>
                             <li><a href="/demo/user/login/index.html"><i class="fa fa-sign-in"></i> &nbsp;登录</a></li>
@@ -84,44 +97,60 @@
         </div>
     </div>
 </div>
-<div class="container tc-main"><h2>{$categoryInfo.name}</h2>
+<div class="container tc-main">
     <div class="row">
         <div class="span9">
-            <div class="">
-                <volist name="newsData" id="v">
-                    <div class="list-boxes">
-                        <div class="tc-gridbox list_imgs" style="box-shadow: none;overflow: hidden;">
-                            <div class="header">
-                                <img src="{$v.thumbnail}" alt="{$v.post_title}" class="img-responsive img-thumbnail">
-                            </div>
-                        </div>
-                        <div class="list_excerpt">
-                            <h2>
-                                <a href="{$v.url}">
-                                    {$v.post_title}
-                                </a>
-                            </h2>
-                            <p>
-                                {$v.post_excerpt}
-                            </p>
-                            <div>
-                                <div class="pull-right">
-                                    <div class="list-actions">
-                                        <a href="javascript:;">
-                                            <i class="fa fa-eye jian5"></i><span>{$v.post_hits}</span>
-                                        </a>
-                                    </div>
-                                </div>
-                                <p class="pull-left">{$v.published_time}</p>
-                            </div>
-                        </div>
-                    </div>
-                </volist>
-            </div>
-            <div class="pagination">
-                <ul>
-                   {$fenye}
-                </ul>
+            <div class="tc-box first-box article-box"><h2>{$protalPostData.post_title}</h2>
+                <div class="article-infobox">
+                    <span>{$protalPostData.published_time} by {$protalPostData.user_name}</span>
+                    <span class="pull-right">
+                        <a href="javascript:;">
+                            <i class="fa fa-eye jian5"></i><span>{$protalPostData.post_hits}</span>
+                        </a>
+                    </span>
+                </div>
+                <hr>
+                <div id="article_content">
+                    {$protalPostData.post_content}
+                </div>
+                <div>
+                    <if condition="$protalPostData['before_url'] neq ''">
+                        <a href="{$protalPostData['before_url']}" class="btn btn-primary pull-left">上一篇</a>
+                    </if>
+                    <if condition="$protalPostData['last_url'] neq ''">
+                        <a href="{$protalPostData['last_url']}" class="btn btn-warning pull-right">下一篇</a>
+                    </if>
+                    <script type="text/javascript" src="{$server_name}/js/qrcode.min.js"></script>
+                    <script type="text/javascript">
+                        var qrcode = new QRCode(document.getElementById("qrcode"), {
+                            width: 100,
+                            height: 100
+                        });
+                        function makeCode() {
+                            qrcode.makeCode("http://demo.pengyichen.cn/demo/articles/23.html");
+                        }
+                        makeCode();
+                    </script>
+                    <div class="clearfix"></div>
+                </div>
+                <script src="{$server_name}/js/jquery-1.8.3.min.js"></script>
+                <div class="hide_box"></div>
+                <script type="text/javascript">
+                    $(function () {
+                        $(".pay_item").click(function () {
+                            $(this).addClass('checked').siblings('.pay_item').removeClass('checked');
+                            var dataid = $(this).attr('data-id');
+                            $(".shang_payimg img").attr("src", "/demo/themes/ky_blog/Public/assets/images/dashang/" + dataid + "img.jpg");
+                            $("#shang_pay_txt").text(dataid == "alipay" ? "支付宝" : "微信");
+                        });
+                    });
+
+                    function dashangToggle() {
+                        $(".hide_box").fadeToggle();
+                        $(".shang_box").fadeToggle();
+                    }
+                </script>
+                <br>
             </div>
         </div>
         <div class="span3">
@@ -148,10 +177,10 @@
                 with (document)0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=86835285.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
             </div>
             <div class="tc-box">
-                <div class="headtitle"><h2>热门文章</h2></div>
+                <div class="headtitle"><h2>相关文章</h2></div>
                 <div class="ranking">
                     <ul class="unstyled">
-                        <volist name="hotNewsList" id="v">
+                        <volist name="aboutNewsList" id="v">
                             <if condition="$key<3">
                                 <li class="top3">
                                     <i>{$key+1}</i>
@@ -191,7 +220,7 @@
         WEB_ROOT: "/demo/",
         JS_ROOT: "public/js/"
     };
-</script>
+</script> <!-- Placed at the end of the document so the pages load faster -->
 <script src="{$server_name}/js/jquery.js"></script>
 <script src="{$server_name}/js/wind.js"></script>
 <script src="{$server_name}/js/bootstrap.min.js"></script>

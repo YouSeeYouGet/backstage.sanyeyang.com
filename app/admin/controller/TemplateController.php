@@ -18,6 +18,7 @@ class TemplateController extends AdminBaseController
     protected $nav_menu;
     protected $server_root;
     protected $portal_post;
+    protected $portal_tag_post;
     protected $portal_category;
     protected $portal_category_post;
 
@@ -30,6 +31,7 @@ class TemplateController extends AdminBaseController
         $this->nav_menu = Db::name('nav_menu');
         $this->server_root=config('server_root');
         $this->portal_post = Db::name('portal_post');
+        $this->portal_tag_post = Db::name('portal_tag_post');
         $this->portal_category = Db::name('portal_category');
         $this->portal_category_post = Db::name("portal_category_post");
     }
@@ -53,9 +55,9 @@ class TemplateController extends AdminBaseController
         $this->assign('server_name',config('server_name'));
 
         $this->_create_index();
-        $this->_create_news_list();exit;
+        $this->_create_news_list();
         $this->_create_news_detail();
-        return $this->fetch();
+//        return $this->fetch();
     }
 
     /**
@@ -83,7 +85,7 @@ class TemplateController extends AdminBaseController
 
             $slideList[$k]['thumbnail']=$thumbnail;
             $slideList[$k]['post_title']=trim($v['post_title']);
-            $slideList[$k]['url']='/'.$user_nickname.'/article/details/'.date('Ymd',$v['published_time']);
+            $slideList[$k]['url']='/'.$user_nickname.'/article/details/'.substr(md5($v['create_time']),-8);
             $slideList[$k]['published_time']=date('Y-m-d H:i:s',$v['published_time']);
         }
         $this->assign('slideList',$slideList);
@@ -104,13 +106,13 @@ class TemplateController extends AdminBaseController
 
             $topNewsList[$k]['thumbnail']=$thumbnail;
             $topNewsList[$k]['post_title']=trim($v['post_title']);
-            $topNewsList[$k]['url']='/'.$user_nickname.'/article/details/'.date('Ymd',$v['published_time']);
+            $topNewsList[$k]['url']='/'.$user_nickname.'/article/details/'.substr(md5($v['create_time']),-8);
             $topNewsList[$k]['published_time']=date('Y-m-d H:i:s',$v['published_time']);
         }
         $this->assign('topNewsList',$topNewsList);
 
         //最新发布
-        $newNewsList=$this->portal_post->where(['post_status'=>1,'delete_time'=>0])->order('published_time desc')->limit(20)->select();
+        $newNewsList=$this->portal_post->where(['id'=>['not in',$postIDArr],'post_status'=>1,'delete_time'=>0])->order('published_time desc')->limit(20)->select();
         $newNewsList = $newNewsList->toArray();
         if(!empty($newNewsList)){
             foreach ($newNewsList as $k => $v) {
@@ -125,14 +127,14 @@ class TemplateController extends AdminBaseController
 
                 $newNewsList[$k]['thumbnail']=$thumbnail;
                 $newNewsList[$k]['post_title']=trim($v['post_title']);
-                $newNewsList[$k]['url']='/'.$user_nickname.'/article/details/'.date('Ymd',$v['published_time']);
+                $newNewsList[$k]['url']='/'.$user_nickname.'/article/details/'.substr(md5($v['create_time']),-8);
                 $newNewsList[$k]['published_time']=date('Y-m-d H:i:s',$v['published_time']);
             }
             $this->assign('newNewsList',$newNewsList);
         }
 
         //热门文章
-        $hotNewsList=$this->portal_post->where(['post_status'=>1,'delete_time'=>0])->order('post_hits desc, post_like desc,comment_count desc')->limit(20)->select();
+        $hotNewsList=$this->portal_post->where(['id'=>['not in',$postIDArr],'post_status'=>1,'delete_time'=>0])->order('post_hits desc, post_like desc,comment_count desc')->limit(20)->select();
         $hotNewsList = $hotNewsList->toArray();
         foreach ($hotNewsList as $k => $v) {
             $userInfo=$this->user->where(['id'=>$v['user_id']])->find();
@@ -147,7 +149,7 @@ class TemplateController extends AdminBaseController
 
             $hotNewsList[$k]['thumbnail']=$thumbnail;
             $hotNewsList[$k]['post_title']=trim($v['post_title']);
-            $hotNewsList[$k]['url']='/'.$user_nickname.'/article/details/'.date('Ymd',$v['published_time']);
+            $hotNewsList[$k]['url']='/'.$user_nickname.'/article/details/'.substr(md5($v['create_time']),-8);
             $hotNewsList[$k]['published_time']=date('Y-m-d H:i:s',$v['published_time']);
         }
         $this->assign('hotNewsList',$hotNewsList);
@@ -198,7 +200,7 @@ class TemplateController extends AdminBaseController
 
                 $hotNewsList[$k2]['thumbnail']=$thumbnail;
                 $hotNewsList[$k2]['post_title']=trim($v2['post_title']);
-                $hotNewsList[$k2]['url']='/'.$user_nickname.'/article/details/'.date('Ymd',$v2['published_time']);
+                $hotNewsList[$k2]['url']='/'.$user_nickname.'/article/details/'.substr(md5($v2['create_time']),-8);
                 $hotNewsList[$k2]['published_time']=date('Y-m-d H:i:s',$v2['published_time']);
             }
             $this->assign('hotNewsList',$hotNewsList);
@@ -207,12 +209,12 @@ class TemplateController extends AdminBaseController
             $newsList=$newsList->toArray();
             $num = count($newsList);
 
-            $page = ceil($num / 3);
+            $page = ceil($num / 20);
             for ($i = 0; $i < $page; $i++) {
                 $newsData = [];
                 foreach ($newsList as $k1 => $v1) {
                     $t = $i + 1;
-                    if (3 * $i <= $k1 && $k1 < 3 * $t) {
+                    if (20 * $i <= $k1 && $k1 < 20 * $t) {
                         $userInfo=$this->user->where(['id'=>$v1['user_id']])->find();
                         $user_nickname=$Pinyin::getPinyin($userInfo['user_nickname']);
                         $moreArr=json_decode($v1['more'],true);
@@ -224,7 +226,7 @@ class TemplateController extends AdminBaseController
 
                         $newsData[$k1]['thumbnail']=$thumbnail;
                         $newsData[$k1]['post_title']=trim($v1['post_title']);
-                        $newsData[$k1]['url']='/'.$user_nickname.'/article/details/'.date('Ymd',$v1['published_time']);
+                        $newsData[$k1]['url']='/'.$user_nickname.'/article/details/'.substr(md5($v1['create_time']),-8);
                         $newsData[$k1]['published_time']=date('Y-m-d H:i:s',$v1['published_time']);
                         $newsData[$k1]['post_excerpt']=$v1['post_excerpt'];
                         $newsData[$k1]['post_hits']=$v1['post_hits'];
@@ -235,10 +237,8 @@ class TemplateController extends AdminBaseController
                 $nexti = $i + 1;
                 if ($i == 0) {
                     $listHtmlName = 'index';
-                    $listUrl = $v['href'].'/index.html';
                 } else {
                     $listHtmlName = 'index-'. $nexti;
-                    $listUrl =$v['href'].'/'.'index-'. $nexti . ".html";
                 }
 
                 if ($i < 2) {
@@ -293,53 +293,80 @@ class TemplateController extends AdminBaseController
      */
     private function _create_news_detail()
     {
-        if (!empty($this->newsPostids)) {
-            $top10 = $this->posts_model->where(['softid' => $this->softid, 'id' => ['in', $this->newsPostids], 'post_status' => 1])->order('istop desc,post_date desc')->limit(10)->select();
-            $top10 = $top10->toArray();
-            foreach ($top10 as $k => $v) {
-                $top10[$k]['detailsName'] = substr(md5($v['id']), -10) . '.html';
-            }
+        include_once '../simplewind/vendor/pinyin/pinyin.class.php';
+        $Pinyin=new \Pinyin();
+        $categoryID=$this->portal_category->where(['name'=>'首页轮播图','delete_time'=>0,'status'=>1])->value('id');
+        $postIDArr=$this->portal_category_post->where(['category_id'=>$categoryID,'status'=>1])->column('post_id');
+        $protalPostList=$this->portal_post->where(['id'=>['not in',$postIDArr],'post_status'=>1,'delete_time'=>0])->order('published_time desc')->select();
+        $protalPostList=$protalPostList->toArray();
+        $protalPostData=[];
+        foreach($protalPostList as $k=>$v){
+            $protalPostData['post_title']=trim($v['post_title']);
+            $protalPostData['post_keywords']=trim($v['post_keywords']);
+            $protalPostData['post_excerpt']=trim($v['post_excerpt']);
+            $protalPostData['post_hits']=trim($v['post_hits']);
+            $protalPostData['published_time']=date('Y-m-d H:i:s',$v['published_time']);
+            $protalPostData['post_content']=htmlspecialchars_decode($v['post_content']);
 
-            $newsPostsList = $this->posts_model->where(['softid' => $this->softid, 'id' => ['in', $this->newsPostids], 'post_status' => 1])->order('istop desc,post_date desc')->select();
-            $newsPostsList = $newsPostsList->toArray();
-            foreach ($newsPostsList as $k => $v) {
-                $img_data = $this->_gPicUrl($v['post_content']);
-                if (!empty($img_data)) {
-                    $img_replace_array = array();
-                    for ($i = 0; $i < count($img_data); $i++) {
-                        $img_info = explode('/', $img_data[$i]);
-                        $img_name = array_pop($img_info);
-                        if (strstr($img_name, '?')) {
-                            $img_name = reset(explode('?', $img_name));
-                        }
-                        $img_data[$i] = str_replace('/data','',$img_data[$i]);
-                        if(is_file("." . $img_data[$i])){
-                            copy("." . $img_data[$i], $this->new_images . $img_name);
-                        }
-                        // 放到替换数组
-                        array_push($img_replace_array, array(
-                            'old' => 'src="' . $img_data[$i] . '"',
-                            'new' => 'src="../other_images/' . date('Ymd', time()) . '/' . $img_name . '"'
-                        ));
-                    }
-                    // 替换图片
-                    foreach ($img_replace_array as $key_replace => $value_replace) {
-                        $newsPostsList[$k]['post_content'] = str_replace($value_replace['old'], $value_replace['new'], $newsPostsList[$k]['post_content']);
-                    }
+            $img_data = $this->_gPicUrl(htmlspecialchars_decode($v['post_content']));
+            if (!empty($img_data)) {
+                $img_replace_array = array();
+                for ($i = 0; $i < count($img_data); $i++) {
+
+                    // 放到替换数组
+                    array_push($img_replace_array, array(
+                        'old' => 'src="' . $img_data[$i] . '"',
+                        'new' => 'src="'.config('img_url') . '/upload/' . $img_data[$i] . '"'
+                    ));
+                }
+                // 替换图片
+                foreach ($img_replace_array as $key_replace => $value_replace) {
+                    $protalPostData['post_content'] = str_replace($value_replace['old'], $value_replace['new'], htmlspecialchars_decode($v['post_content']));
                 }
             }
 
-            foreach ($newsPostsList as $k => $v) {
-                $this->top10 = $top10;
-                $this->newsInfo = $v;
-                $detailsName = substr(md5($v['id']), -10);
-                $this->assign(array(
-                    'detail_logo_style'=>$this->detail_logo_style,
-                    'newsInfo'=>$this->newsInfo,
-                    'top10'=>$this->top10,
-                ));
-                $this->buildHtml($detailsName, './home/' . $this->softid . '/news/', 'template:news_detail', 'utf-8');
+            if($k==0){
+                $userInfo=$this->user->where(['id'=>$protalPostList[$k+1]['user_id']])->find();
+                $user_nickname=$Pinyin::getPinyin($userInfo['user_nickname']);
+                $protalPostData['before_url']='';
+                $protalPostData['last_url']='/'.$user_nickname.'/article/details/'.substr(md5($protalPostList[$k+1]['create_time']),-8);
+            }else if($k==(count($protalPostList)-1)){
+                $userInfo=$this->user->where(['id'=>$protalPostList[$k-1]['user_id']])->find();
+                $user_nickname=$Pinyin::getPinyin($userInfo['user_nickname']);
+                $protalPostData['before_url']='/'.$user_nickname.'/article/details/'.substr(md5($protalPostList[$k-1]['create_time']),-8);
+                $protalPostData['last_url']='';
+            }else{
+                $before_userInfo=$this->user->where(['id'=>$protalPostList[$k-1]['user_id']])->find();
+                $last_userInfo=$this->user->where(['id'=>$protalPostList[$k+1]['user_id']])->find();
+                $before_user_nickname=$Pinyin::getPinyin($before_userInfo['user_nickname']);
+                $last_user_nickname=$Pinyin::getPinyin($last_userInfo['user_nickname']);
+                $protalPostData['before_url']='/'.$before_user_nickname.'/article/details/'.substr(md5($protalPostList[$k-1]['create_time']),-8);
+                $protalPostData['last_url']='/'.$last_user_nickname.'/article/details/'.substr(md5($protalPostList[$k+1]['create_time']),-8);
             }
+
+
+            //相关文章
+            $tagIDArr=$this->portal_tag_post->where(['post_id'=>$v['id'],'status'=>1])->column('tag_id');
+            $postIDArr=$this->portal_tag_post->where(['tag_id'=>['in',$tagIDArr],'status'=>1,'post_id'=>['neq',$v['id']]])->column('post_id');
+            $aboutNewsList=$this->portal_post->where(['id'=>['in',$postIDArr],'post_status'=>1,'delete_time'=>0])->order('post_hits desc, post_like desc,comment_count desc')->limit(20)->select();
+            $aboutNewsList = $aboutNewsList->toArray();
+            foreach ($aboutNewsList as $k2 => $v2) {
+                $userInfo=$this->user->where(['id'=>$v2['user_id']])->find();
+                $user_nickname=$Pinyin::getPinyin($userInfo['user_nickname']);
+                $aboutNewsList[$k2]['post_title']=trim($v2['post_title']);
+                $aboutNewsList[$k2]['url']='/'.$user_nickname.'/article/details/'.substr(md5($v2['create_time']),-8);
+                $aboutNewsList[$k2]['published_time']=date('Y-m-d H:i:s',$v2['published_time']);
+            }
+
+            $userInfo=$this->user->where(['id'=>$protalPostList[$k]['user_id']])->find();
+            $user_nickname=$Pinyin::getPinyin($userInfo['user_nickname']);
+            $protalPostData['user_name']=$userInfo['user_nickname'];
+            if(!@file_exists('../../'.$this->server_root.'/'.$user_nickname.'/article/details/'.substr(md5($v['create_time']),-8))){
+                mkdir('../../'.$this->server_root.'/'.$user_nickname.'/article/details/'.substr(md5($v['create_time']),-8), 0777,true);
+            }
+            $this->assign('aboutNewsList',$aboutNewsList);
+            $this->assign('protalPostData',$protalPostData);
+            $this->buildHtml('index', '../../'.$this->server_root.'/'.$user_nickname.'/article/details/'.substr(md5($v['create_time']),-8).'/', 'template:detail', 'utf-8');
         }
     }
 
@@ -359,26 +386,6 @@ class TemplateController extends AdminBaseController
         $htmlfile = $htmlpath . $htmlfile . '.html';
         file_put_contents($htmlfile, $content);
         return $content;
-    }
-
-    /**
-     * 获取文章ids
-     * @return array
-     */
-    private function _getPostids()
-    {
-        $portalCategoryPostList = $this->portal_category_post->where(['status' => 1])->field('post_id,category_id')->select();
-        $hotNewsIds = array();
-        foreach ($portalCategoryPostList as $k => $v) {
-            $name = $this->portal_category->where(['id' => $v['category_id'], 'status' => 1])->value('name');
-            if ($name == '轮播图') {
-                $slideIds[] = $v['category_id'];
-            }
-        }
-        $result = [
-            0 => $hotNewsIds,
-        ];
-        return $result[] = $result;
     }
 
     //提取图片
