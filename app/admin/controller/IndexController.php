@@ -47,6 +47,7 @@ class IndexController extends AdminBaseController
 
         //$admin = Db::name("user")->where('id', cmf_get_current_admin_id())->find();
         //$this->assign('admin', $admin);
+        $this->assign('server_name',config('server_name'));
         return $this->fetch();
     }
 }
