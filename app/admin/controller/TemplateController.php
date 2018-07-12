@@ -42,22 +42,26 @@ class TemplateController extends AdminBaseController
      */
     public function createtemplate()
     {
-        //网站信息
-        $siteInfo  = cmf_get_option('site_info');
-        $this->assign('siteInfo',$siteInfo);
-
         //导航
         $navMainInfo=$this->nav->where(['is_main'=>1])->find();
         $navMenuList=$this->nav_menu->where(['nav_id'=>$navMainInfo['id'],'status'=>1])->order('list_order asc')->select();
         $navMenuList=$navMenuList->toArray();
+        $mainNavName=urlencode($navMainInfo['name']);
 
+
+        //友情链接
+        $linksList = $this->link->where(['status' => 1])->order('list_order asc')->select();
+        $linksList = $linksList->toArray();
+
+        $this->assign('linksList',$linksList);
+        $this->assign('mainNavName',$mainNavName);
         $this->assign('navMenuList',$navMenuList);
         $this->assign('server_name',config('server_name'));
 
         $this->_create_index();
         $this->_create_news_list();
         $this->_create_news_detail();
-//        return $this->fetch();
+        exit;
     }
 
     /**
@@ -65,59 +69,22 @@ class TemplateController extends AdminBaseController
      */
     private function _create_index()
     {
-        include_once '../simplewind/vendor/pinyin/pinyin.class.php';
-        $Pinyin=new \Pinyin();
-
-        //轮播图
-        $categoryID=$this->portal_category->where(['name'=>'首页轮播图','delete_time'=>0,'status'=>1])->value('id');
-        $postIDArr=$this->portal_category_post->where(['category_id'=>$categoryID,'status'=>1])->column('post_id');
-        $slideList=$this->portal_post->where(['id'=>['in',$postIDArr],'post_status'=>1,'delete_time'=>0])->order('published_time desc')->select();
-        $slideList = $slideList->toArray();
-        foreach ($slideList as $k => $v) {
-            $userInfo=$this->user->where(['id'=>$v['user_id']])->find();
-            $user_nickname=$Pinyin::getPinyin($userInfo['user_nickname']);
-            $moreArr=json_decode($v['more'],true);
-            if(!empty($moreArr['thumbnail'])){
-                $thumbnail=config('img_url').'/upload/'.$moreArr['thumbnail'];
-            }else{
-                $thumbnail=config('default_img');
-            }
-
-            $slideList[$k]['thumbnail']=$thumbnail;
-            $slideList[$k]['post_title']=trim($v['post_title']);
-            $slideList[$k]['url']='/'.$user_nickname.'/article/details/'.substr(md5($v['create_time']),-8);
-            $slideList[$k]['published_time']=date('Y-m-d H:i:s',$v['published_time']);
-        }
-        $this->assign('slideList',$slideList);
-
-        //置顶推荐
-        $topNewsList=$this->portal_post->where(['post_status'=>1,'is_top'=>1,'delete_time'=>0])->order('published_time desc')->limit(4)->select();
-        $topNewsList = $topNewsList->toArray();
-        foreach ($topNewsList as $k => $v) {
-            $userInfo=$this->user->where(['id'=>$v['user_id']])->find();
-            $user_nickname=$Pinyin::getPinyin($userInfo['user_nickname']);
-            $moreArr=json_decode($v['more'],true);
-
-            if(!empty($moreArr['thumbnail'])){
-                $thumbnail=config('img_url').'/upload/'.$moreArr['thumbnail'];
-            }else{
-                $thumbnail=config('default_img');
-            }
-
-            $topNewsList[$k]['thumbnail']=$thumbnail;
-            $topNewsList[$k]['post_title']=trim($v['post_title']);
-            $topNewsList[$k]['url']='/'.$user_nickname.'/article/details/'.substr(md5($v['create_time']),-8);
-            $topNewsList[$k]['published_time']=date('Y-m-d H:i:s',$v['published_time']);
-        }
-        $this->assign('topNewsList',$topNewsList);
+        //网站信息
+        $siteInfo  = cmf_get_option('site_info');
+        $this->assign('siteInfo',$siteInfo);
 
         //最新发布
-        $newNewsList=$this->portal_post->where(['id'=>['not in',$postIDArr],'post_status'=>1,'delete_time'=>0])->order('published_time desc')->limit(20)->select();
+        $newNewsList=$this->portal_post->where(['post_status'=>1,'delete_time'=>0,'is_top'=>['neq',1]])->order('is_top desc,published_time desc')->limit(20)->select();
         $newNewsList = $newNewsList->toArray();
         if(!empty($newNewsList)){
             foreach ($newNewsList as $k => $v) {
+                if($v['id']<10000){
+                    $idLen=strlen($v['id']);
+                    $idNum=str_pad($v['id'],5,"0",STR_PAD_LEFT);
+                }else{
+                    $idNum=$v['id'];
+                }
                 $userInfo=$this->user->where(['id'=>$v['user_id']])->find();
-                $user_nickname=$Pinyin::getPinyin($userInfo['user_nickname']);
                 $moreArr=json_decode($v['more'],true);
                 if(!empty($moreArr['thumbnail'])){
                     $thumbnail=config('img_url').'/upload/'.$moreArr['thumbnail'];
@@ -127,40 +94,17 @@ class TemplateController extends AdminBaseController
 
                 $newNewsList[$k]['thumbnail']=$thumbnail;
                 $newNewsList[$k]['post_title']=trim($v['post_title']);
-                $newNewsList[$k]['url']='/'.$user_nickname.'/article/details/'.substr(md5($v['create_time']),-8);
-                $newNewsList[$k]['published_time']=date('Y-m-d H:i:s',$v['published_time']);
+                $newNewsList[$k]['url']=config('server_name').'/post/'.$idNum.'.html';
+                $newNewsList[$k]['published_time']=date('Y年m月d日',$v['published_time'])." &#8211; ".getStrTime($v['published_time'])." ".date('H:i',$v['published_time']);
+                $newNewsList[$k]['user_nickname']=$userInfo['user_nickname'];
             }
+
             $this->assign('newNewsList',$newNewsList);
         }
 
-        //热门文章
-        $hotNewsList=$this->portal_post->where(['id'=>['not in',$postIDArr],'post_status'=>1,'delete_time'=>0])->order('post_hits desc, post_like desc,comment_count desc')->limit(20)->select();
-        $hotNewsList = $hotNewsList->toArray();
-        foreach ($hotNewsList as $k => $v) {
-            $userInfo=$this->user->where(['id'=>$v['user_id']])->find();
-            $user_nickname=$Pinyin::getPinyin($userInfo['user_nickname']);
-            $moreArr=json_decode($v['more'],true);
-
-            if(!empty($moreArr['thumbnail'])){
-                $thumbnail=config('img_url').'/upload/'.$moreArr['thumbnail'];
-            }else{
-                $thumbnail=config('default_img');
-            }
-
-            $hotNewsList[$k]['thumbnail']=$thumbnail;
-            $hotNewsList[$k]['post_title']=trim($v['post_title']);
-            $hotNewsList[$k]['url']='/'.$user_nickname.'/article/details/'.substr(md5($v['create_time']),-8);
-            $hotNewsList[$k]['published_time']=date('Y-m-d H:i:s',$v['published_time']);
-        }
-        $this->assign('hotNewsList',$hotNewsList);
-
-        //友情链接
-        $linksList = $this->link->where(['status' => 1])->order('list_order asc')->select();
-        $linksList = $linksList->toArray();
-        $this->assign('linksList',$linksList);
-
         //生成模板
         $this->buildHtml('index', '../../'.$this->server_root.'/', 'template:index', 'utf-8');
+        exit;
     }
 
     /**
@@ -230,6 +174,7 @@ class TemplateController extends AdminBaseController
                         $newsData[$k1]['published_time']=date('Y-m-d H:i:s',$v1['published_time']);
                         $newsData[$k1]['post_excerpt']=$v1['post_excerpt'];
                         $newsData[$k1]['post_hits']=$v1['post_hits'];
+                        $newsData[$k1]['user_nickname']=$userInfo['user_nickname'];
                     }
                 }
                 $this->assign('newsData',$newsData);
@@ -295,12 +240,14 @@ class TemplateController extends AdminBaseController
     {
         include_once '../simplewind/vendor/pinyin/pinyin.class.php';
         $Pinyin=new \Pinyin();
+
         $categoryID=$this->portal_category->where(['name'=>'首页轮播图','delete_time'=>0,'status'=>1])->value('id');
         $postIDArr=$this->portal_category_post->where(['category_id'=>$categoryID,'status'=>1])->column('post_id');
         $protalPostList=$this->portal_post->where(['id'=>['not in',$postIDArr],'post_status'=>1,'delete_time'=>0])->order('published_time desc')->select();
         $protalPostList=$protalPostList->toArray();
         $protalPostData=[];
         foreach($protalPostList as $k=>$v){
+            $protalPostData['id']=trim($v['id']);
             $protalPostData['post_title']=trim($v['post_title']);
             $protalPostData['post_keywords']=trim($v['post_keywords']);
             $protalPostData['post_excerpt']=trim($v['post_excerpt']);
@@ -321,21 +268,23 @@ class TemplateController extends AdminBaseController
                 }
                 // 替换图片
                 foreach ($img_replace_array as $key_replace => $value_replace) {
-                    $protalPostData['post_content'] = str_replace($value_replace['old'], $value_replace['new'], htmlspecialchars_decode($v['post_content']));
+                    $protalPostList[$k]['post_content'] = str_replace($value_replace['old'], $value_replace['new'], htmlspecialchars_decode($protalPostList[$k]['post_content'] ));
                 }
             }
-
-            if($k==0){
+            $protalPostData['post_content']=htmlspecialchars_decode($protalPostList[$k]['post_content']);
+            $protalPostData['before_url']='';
+            $protalPostData['last_url']='';
+            if($k==0&&isset($protalPostList[$k+1])){
                 $userInfo=$this->user->where(['id'=>$protalPostList[$k+1]['user_id']])->find();
                 $user_nickname=$Pinyin::getPinyin($userInfo['user_nickname']);
                 $protalPostData['before_url']='';
                 $protalPostData['last_url']='/'.$user_nickname.'/article/details/'.substr(md5($protalPostList[$k+1]['create_time']),-8);
-            }else if($k==(count($protalPostList)-1)){
+            }else if($k==(count($protalPostList)-1)&&isset($protalPostList[$k-1])){
                 $userInfo=$this->user->where(['id'=>$protalPostList[$k-1]['user_id']])->find();
                 $user_nickname=$Pinyin::getPinyin($userInfo['user_nickname']);
                 $protalPostData['before_url']='/'.$user_nickname.'/article/details/'.substr(md5($protalPostList[$k-1]['create_time']),-8);
                 $protalPostData['last_url']='';
-            }else{
+            }else if(isset($protalPostList[$k+1])&&isset($protalPostList[$k-1])){
                 $before_userInfo=$this->user->where(['id'=>$protalPostList[$k-1]['user_id']])->find();
                 $last_userInfo=$this->user->where(['id'=>$protalPostList[$k+1]['user_id']])->find();
                 $before_user_nickname=$Pinyin::getPinyin($before_userInfo['user_nickname']);
