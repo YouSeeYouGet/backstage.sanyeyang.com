@@ -8,30 +8,30 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{$siteInfo.site_seo_title}</title>
-    <link href="./resources/css/glyphicons.css" rel="stylesheet"/>
-    <link rel="apple-touch-icon" sizes="57x57" href="https://kenengba.com/apple-touch-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="https://kenengba.com/apple-touch-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="https://kenengba.com/apple-touch-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="https://kenengba.com/apple-touch-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="https://kenengba.com/apple-touch-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="https://kenengba.com/apple-touch-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="https://kenengba.com/apple-touch-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="https://kenengba.com/apple-touch-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="https://kenengba.com/apple-touch-icon-180x180.png">
-    <link rel="icon" type="image/png" href="https://kenengba.com/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://kenengba.com/android-chrome-192x192.png" sizes="192x192">
-    <link rel="icon" type="image/png" href="https://kenengba.com/favicon-96x96.png" sizes="96x96">
-    <link rel="icon" type="image/png" href="https://kenengba.com/favicon-16x16.png" sizes="16x16">
-    <link rel="manifest" href="./resources/other/manifest.json">
-    <link rel="mask-icon" href="./resources/fonts/safari-pinned-tab.svg" color="#5bbad5">
+    <link href="{$server_name}/resources/css/glyphicons.css" rel="stylesheet"/>
+    <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/android-chrome-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="{$server_name}/resources/other/manifest.json">
+    <link rel="mask-icon" href="{$server_name}/resources/fonts/safari-pinned-tab.svg" color="#5bbad5">
     <meta name="msapplication-TileColor" content="#da532c">
-    <meta name="msapplication-TileImage" content="https://kenengba.com/mstile-144x144.png">
+    <meta name="msapplication-TileImage" content="/mstile-144x144.png">
     <meta name="theme-color" content="#ffffff">
     <!--[if IE]><script src="https://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
     <meta name="description" content="{$siteInfo.site_seo_description}"/>
     <meta name="keywords" content="{$siteInfo.site_seo_keywords}"/>
-    <link rel='next' href='https://kenengba.com/page/2'/>
-    <link rel="canonical" href="https://kenengba.com/"/>
+    <link rel='next' href='{$server_name}/page/2'/>
+    <link rel="canonical" href="{$server_name}"/>
     <link rel='dns-prefetch' href='//s.w.org'/>
     <script type="text/javascript">
         window._wpemojiSettings = {
@@ -96,49 +96,18 @@
             padding: 0 !important;
         }
     </style>
-    <link rel='stylesheet' id='bwp-rc-css' href='./resources/css/bwp-recent-comments-noava.css?ver=1.2.2' type='text/css' media='all'/>
-    <link rel='stylesheet' id='related-post-css' href='./resources/css/related-post.css?ver=4.9.5' type='text/css' media='all'/>
-    <link rel='stylesheet' id='related-post-style-css' href='./resources/css/style.css?ver=4.9.5' type='text/css' media='all'/>
-    <link rel='stylesheet' id='font-awesome-css' href='./resources/css/font-awesome.min.css?ver=4.9.5' type='text/css' media='all'/>
-    <link rel='stylesheet' id='owl.carousel-css' href='./resources/css/owl.carousel.css?ver=4.9.5' type='text/css' media='all'/>
-    <link rel='stylesheet' id='theme_stylesheet-css' href='./resources/css/ward_style.css?ver=4.9.5' type='text/css' media='all'/>
-    <script language="JavaScript" type="text/javascript" src="./resources/js/jquery.min.js"></script>
-    <link rel="stylesheet" href="./resources/css/style.css" type="text/css" media="screen"/>
-    <script language="JavaScript" type="text/javascript">
-        //<![CDATA[
-        var va = "您已经投过票了";
-        function acv_vote(id, option, m) {
-            if (m == null) m = '';
-            m = m + '';
-            $('#acv_stat_' + m + id).html('正在处理...');
-            var url = "https://kenengba.com/index.php?acv_ajax=true&option=" + option + "&ID=" + id;
-            $.get(url, function (d) {
-                d = d.split('|');
-                var s = '#acv_stat_' + m + d[0];
-                var sele = '#cos_support-' + m + id, unsele = '#cos_unsupport-' + m + id, tpjs = 'javascript:alert(va)';
-                $(s).html(d[1]);
-                $(s).fadeOut(400, function () {
-                    $(s).fadeIn();
-                });
-                if (d[2] == 1) {
-                    $(sele).html($(sele).html() * 1 + 1);
-                }
-                if (d[2] == -1) {
-                    $(unsele).html($(unsele).html() * 1 + 1);
-                }
-                $('#vote4-' + id).attr('href', tpjs);
-                $('#vote4-2' + id).attr('href', tpjs);
-                $('#votea-' + id).attr('href', tpjs);
-                $('#votea-2' + id).attr('href', tpjs);
-            });
-        }
-        //]]>
-    </script>
-    <script type='text/javascript' src='./resources/js/jquery.js?ver=1.12.4'></script>
-    <script type='text/javascript' src='./resources/js/jquery-migrate.min.js?ver=1.4.1'></script>
-    <script type='text/javascript' src='./resources/js/related-post-scripts.js?ver=4.9.5'></script>
-    <script type='text/javascript' src='./resources/js/owl.carousel.min.js?ver=4.9.5'></script>
-    <link rel='https://api.w.org/' href='./resources/other/wp-json/'/>
+    <link rel='stylesheet' id='bwp-rc-css' href='{$server_name}/resources/css/bwp-recent-comments-noava.css?ver=1.2.2' type='text/css' media='all'/>
+    <link rel='stylesheet' id='related-post-css' href='{$server_name}/resources/css/related-post.css?ver=4.9.5' type='text/css' media='all'/>
+    <link rel='stylesheet' id='related-post-style-css' href='{$server_name}/resources/css/style.css?ver=4.9.5' type='text/css' media='all'/>
+    <link rel='stylesheet' id='font-awesome-css' href='{$server_name}/resources/css/font-awesome.min.css?ver=4.9.5' type='text/css' media='all'/>
+    <link rel='stylesheet' id='owl.carousel-css' href='{$server_name}/resources/css/owl.carousel.css?ver=4.9.5' type='text/css' media='all'/>
+    <link rel='stylesheet' id='theme_stylesheet-css' href='{$server_name}/resources/css/ward_style.css?ver=4.9.5' type='text/css' media='all'/>
+    <script language="JavaScript" type="text/javascript" src="{$server_name}/resources/js/jquery.min.js"></script>
+    <link rel="stylesheet" href="{$server_name}/resources/css/style.css" type="text/css" media="screen"/>
+    <script type='text/javascript' src='{$server_name}/resources/js/jquery.js?ver=1.12.4'></script>
+    <script type='text/javascript' src='{$server_name}/resources/js/jquery-migrate.min.js?ver=1.4.1'></script>
+    <script type='text/javascript' src='{$server_name}/resources/js/related-post-scripts.js?ver=4.9.5'></script>
+    <script type='text/javascript' src='{$server_name}/resources/js/owl.carousel.min.js?ver=4.9.5'></script>
     <meta name="generator" content="WordPress 4.9.5"/>
     <style type="text/css">
         .navigation {
@@ -156,7 +125,7 @@
         }
     </style>
     <!-- Fanqiang Tips start -->
-    <!-- <link rel="stylesheet" type="text/css" href="./resources/css/library/alert.css" />
+    <!-- <link rel="stylesheet" type="text/css" href="{$server_name}/resources/css/library/alert.css" />
     <script>
     function notifyBar(){
     if(! $('.alert-box').length) {
@@ -180,8 +149,17 @@
             m.parentNode.insertBefore(a, m)
         })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
-        ga('create', 'UA-1083082-4', 'kenengba.com');
+        ga('create', 'UA-1083082-4', '{$server_host}');
         ga('send', 'pageview');
+    </script>
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?ccc85e51068749e6adafde1b5703f5db";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
     </script>
 </head>
 <body class="home blog basic">
@@ -217,7 +195,7 @@
         <div class="container">
             <div class="row">
                 <div class="home-jumbotron jumbotron col-lg-10 col-lg-offset-1 col-sm-12">
-                    <h1>Who are we?</h1>
+                    <h1>何为道？</h1>
                     <p class="lead">
                         {$siteInfo.lead}<br/>
                     </p>
@@ -228,7 +206,7 @@
     </div>
     <div id="main">
         <div id="primary" class="">
-            <volist name="newNewsList" id="v">
+            <volist name="newNewsData" id="v">
                 <article id="post-{$v.id}" class="no-featured-image post-{$v.id} post type-post status-publish format-standard hentry category-5 tag-21 tag-502 tag-683">
                     <div class="container">
                         <div class="row">
@@ -242,9 +220,9 @@
                                 <div class="entry-content">
                                     <div id="author_i_home">
                                         <div class="author_av_home">
-                                            <img alt='' src='https://secure.gravatar.com/avatar/ef0a84e8fb973390d0a7eb34f3d35ef3?s=40&#038;d=monsterid&#038;r=x' srcset='https://secure.gravatar.com/avatar/ef0a84e8fb973390d0a7eb34f3d35ef3?s=80&#038;d=monsterid&#038;r=x 2x' class='avatar avatar-40 photo' height='40' width='40'/></div>
+                                            <img alt='' src='{$v.avatar}' srcset='{$v.avatar}' class='avatar avatar-40 photo' height='40' width='40'/></div>
                                         <div class="po_author_home">
-                                            <a href="https://kenengba.com/post/author/jason5ng32" title="由Jason Ng发布" rel="author">Jason Ng</a>&nbsp;&nbsp;&nbsp;&nbsp;<i class="glyphicons icon-calendar"></i> <abbr title="{$v.published_time}">{$v.published_time}</abbr>
+                                            <a href="#" title="由{$v.user_nickname}发布" rel="author">{$v.user_nickname}</a>&nbsp;&nbsp;&nbsp;&nbsp;<i class="glyphicons icon-calendar"></i> <abbr title="{$v.published_time}">{$v.published_time}</abbr>
                                         </div>
                                     </div>
                                     {$v.post_excerpt}
@@ -259,35 +237,10 @@
                     </div>
                 </article>
             </volist>
-
-            <div class="pagebar"><span>分页：&nbsp;</span><span class="this-page">1</span>
-                <a href="https://kenengba.com/page/2" title="第2页">2</a>
-                <a href="https://kenengba.com/page/3" title="第3页">3</a>
-                <a href="https://kenengba.com/page/4" title="第4页">4</a>
-                <a href="https://kenengba.com/page/5" title="第5页">5</a>
-                <a href="https://kenengba.com/page/6" title="第6页">6</a>
-                <a href="https://kenengba.com/page/7" title="第7页">7</a>
-                <a href="https://kenengba.com/page/8" title="第8页">8</a>
-                <span class="break">...</span>
-                <a href="https://kenengba.com/page/77" title="第77页">77</a>
-                <a href="https://kenengba.com/page/78" title="第78页">78</a>
-                <a href="https://kenengba.com/page/79" title="第79页">79</a>
-                <a href="https://kenengba.com/page/2" title="第2页">>></a>
-            </div>
-            <nav class="navigation" role="navigation">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <h1 class="screen-reader-text">Posts navigation</h1>
-                            <div class="nav-previous"><a href="https://kenengba.com/page/2" class="btn btn-primary btn-lg"><span class="meta-nav">&larr;</span> Older posts</a></div>
-                        </div>
-                    </div>
-                </div>
-            </nav>
+            {$page}
         </div>
     </div>
 </div>
-
 <footer id="footer" role="contentinfo">
     <div id="footer-content" class="container">
         <div class="row">
@@ -307,14 +260,14 @@
         <div class="row">
             <div class="col-lg-12">
                 <span class="line"></span>
-                <span class="pull-left">Copyright &copy; 2018 <a href="https://kenengba.com">{$siteInfo.site_name}</a>  版权所有。</span>
+                <span class="pull-left">Copyright &copy; 2018 <a href="{$server_name}">{$siteInfo.site_name}</a>  版权所有。</span>
             </div>
         </div>
     </div>
 </footer>
-<script type='text/javascript' src='./resources/js/bootstrap.min.js?ver=2.2.2'></script>
-<script type='text/javascript' src='./resources/js/theme.js?ver=4.9.5'></script>
-<script type='text/javascript' src='./resources/js/wp-embed.min.js?ver=4.9.5'></script>
-<script type='text/javascript' src='./resources/js/hidpi-gravatars-v14.js?ver=1.5.1'></script>
+<script type='text/javascript' src='{$server_name}/resources/js/bootstrap.min.js?ver=2.2.2'></script>
+<script type='text/javascript' src='{$server_name}/resources/js/theme.js?ver=4.9.5'></script>
+<script type='text/javascript' src='{$server_name}/resources/js/wp-embed.min.js?ver=4.9.5'></script>
+<script type='text/javascript' src='{$server_name}/resources/js/hidpi-gravatars-v14.js?ver=1.5.1'></script>
 </body>
 </html>
