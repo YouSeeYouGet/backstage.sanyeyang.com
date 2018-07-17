@@ -154,8 +154,12 @@
 
                 <div id="posts-pagination">
                     <h3 class="screen-reader-text">Post navigation</h3>
-                    <div class="previous pull-left"><a class="btn btn-primary" href="{$prevData.url}" rel="prev">&larr; {$prevData.post_title}</a></div>
-                    <div class="next pull-right"><a class="btn btn-primary" href="{$prevData.url}" rel="next">{$nextData.post_title} &rarr;</a></div>
+                    <if condition="$prevData['url'] neq '' and $prevData['post_title'] neq ''">
+                        <div class="previous pull-left"><a class="btn btn-primary" href="{$prevData.url}" rel="prev">&larr; {$prevData.post_title}</a></div>
+                    </if>
+                    <if condition="$nextData['url'] neq '' and $nextData['post_title'] neq ''">
+                        <div class="next pull-right"><a class="btn btn-primary" href="{$prevData.url}" rel="next">{$nextData.post_title} &rarr;</a></div>
+                    </if>
                 </div>
             </div>
 
@@ -257,14 +261,5 @@
 <script type='text/javascript' src='{$server_name}/resources/js/wp-embed.min.js?ver=4.9.5'></script>
 <script async="async" type='text/javascript' src='{$server_name}/resources/js/form.js?ver=4.0.3'></script>
 <script type='text/javascript' src='{$server_name}/resources/js/hidpi-gravatars-v14.js?ver=1.5.1'></script>
-<script>
-    var _hmt = _hmt || [];
-    (function() {
-        var hm = document.createElement("script");
-        hm.src = "https://hm.baidu.com/hm.js?ccc85e51068749e6adafde1b5703f5db";
-        var s = document.getElementsByTagName("script")[0];
-        s.parentNode.insertBefore(hm, s);
-    })();
-</script>
 </body>
 </html>

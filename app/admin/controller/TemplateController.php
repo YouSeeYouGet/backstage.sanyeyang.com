@@ -92,7 +92,11 @@ class TemplateController extends AdminBaseController
                 $userInfo=$this->user->where(['id'=>$v['user_id']])->find();
                 $moreArr=json_decode($v['more'],true);
                 if(!empty($moreArr['thumbnail'])){
-                    $thumbnail=config('img_url').'/upload/'.$moreArr['thumbnail'];
+                    if(strpos($moreArr['thumbnail'],'http')!==false){
+                        $thumbnail=$moreArr['thumbnail'];
+                    }else{
+                        $thumbnail=config('img_url').'/upload/'.$moreArr['thumbnail'];
+                    }
                 }else{
                     $thumbnail=config('default_img');
                 }
@@ -102,7 +106,16 @@ class TemplateController extends AdminBaseController
                 $newNewsList[$k]['url']=config('server_name').'/post/'.$idNum.'.html';
                 $newNewsList[$k]['published_time']=date('Y年m月d日',$v['published_time'])." &#8211; ".getStrTime($v['published_time'])." ".date('H:i',$v['published_time']);
                 $newNewsList[$k]['user_nickname']=$userInfo['user_nickname'];
-                $newNewsList[$k]['avatar']=config('img_url').'/upload/'.$userInfo['avatar'];
+                if(!empty($userInfo['avatar'])){
+                    if(strpos($userInfo['avatar'],'http')!==false){
+                        $avatar=$userInfo['avatar'];
+                    }else{
+                        $avatar=config('img_url').'/upload/'.$userInfo['avatar'];
+                    }
+                }else{
+                    $avatar=config('default_avatar');
+                }
+                $newNewsList[$k]['avatar']=$avatar;
             }
 
             $pageNum=ceil($newNewsCount/10);
@@ -194,7 +207,11 @@ class TemplateController extends AdminBaseController
                         $userInfo=$this->user->where(['id'=>$v1['user_id']])->find();
                         $moreArr=json_decode($v1['more'],true);
                         if(!empty($moreArr['thumbnail'])){
-                            $thumbnail=config('img_url').'/upload/'.$moreArr['thumbnail'];
+                            if(strpos($moreArr['thumbnail'],'http')!==false){
+                                $thumbnail=$moreArr['thumbnail'];
+                            }else{
+                                $thumbnail=config('img_url').'/upload/'.$moreArr['thumbnail'];
+                            }
                         }else{
                             $thumbnail=config('default_img');
                         }
@@ -204,7 +221,16 @@ class TemplateController extends AdminBaseController
                         $newNewsList[$k1]['url']=config('server_name').'/post/'.$idNum.'.html';
                         $newNewsList[$k1]['published_time']=date('Y年m月d日',$v1['published_time'])." &#8211; ".getStrTime($v1['published_time'])." ".date('H:i',$v1['published_time']);
                         $newNewsList[$k1]['user_nickname']=$userInfo['user_nickname'];
-                        $newNewsList[$k1]['avatar']=config('img_url').'/upload/'.$userInfo['avatar'];
+                        if(!empty($userInfo['avatar'])){
+                            if(strpos($userInfo['avatar'],'http')!==false){
+                                $avatar=$userInfo['avatar'];
+                            }else{
+                                $avatar=config('img_url').'/upload/'.$userInfo['avatar'];
+                            }
+                        }else{
+                            $avatar=config('default_avatar');
+                        }
+                        $newNewsList[$k1]['avatar']=$avatar;
                     }
                     $pageNum=ceil($newNewsCount/10);
                     for($i=0;$i<$pageNum;$i++){
@@ -302,7 +328,11 @@ class TemplateController extends AdminBaseController
                         $userInfo=$this->user->where(['id'=>$v1['user_id']])->find();
                         $moreArr=json_decode($v1['more'],true);
                         if(!empty($moreArr['thumbnail'])){
-                            $thumbnail=config('img_url').'/upload/'.$moreArr['thumbnail'];
+                            if(strpos($moreArr['thumbnail'],'http')!==false){
+                                $thumbnail=$moreArr['thumbnail'];
+                            }else{
+                                $thumbnail=config('img_url').'/upload/'.$moreArr['thumbnail'];
+                            }
                         }else{
                             $thumbnail=config('default_img');
                         }
@@ -312,7 +342,17 @@ class TemplateController extends AdminBaseController
                         $newNewsList[$k1]['url']=config('server_name').'/post/'.$idNum.'.html';
                         $newNewsList[$k1]['published_time']=date('Y年m月d日',$v1['published_time'])." &#8211; ".getStrTime($v1['published_time'])." ".date('H:i',$v1['published_time']);
                         $newNewsList[$k1]['user_nickname']=$userInfo['user_nickname'];
-                        $newNewsList[$k1]['avatar']=config('img_url').'/upload/'.$userInfo['avatar'];
+
+                        if(!empty($userInfo['avatar'])){
+                            if(strpos($userInfo['avatar'],'http')!==false){
+                                $avatar=$userInfo['avatar'];
+                            }else{
+                                $avatar=config('img_url').'/upload/'.$userInfo['avatar'];
+                            }
+                        }else{
+                            $avatar=config('default_avatar');
+                        }
+                        $newNewsList[$k1]['avatar']=$avatar;
                     }
 
                     $pageNum=ceil($newNewsCount/10);
@@ -405,7 +445,11 @@ class TemplateController extends AdminBaseController
                 $userInfo=$this->user->where(['id'=>$v['user_id']])->find();
                 $moreArr=json_decode($v['more'],true);
                 if(!empty($moreArr['thumbnail'])){
-                    $thumbnail=config('img_url').'/upload/'.$moreArr['thumbnail'];
+                    if(empty($http)){
+                        $thumbnail=config('img_url').'/upload/'.$moreArr['thumbnail'];
+                    }else{
+                        $thumbnail=$moreArr['thumbnail'];
+                    }
                 }else{
                     $thumbnail=config('default_img');
                 }
@@ -416,17 +460,33 @@ class TemplateController extends AdminBaseController
                 $newNewsList[$k]['url']=config('server_name').'/post/'.$idNum.'.html';
                 $newNewsList[$k]['published_time']=date('Y年m月d日',$v['published_time'])."<br />".getStrTime($v['published_time'])." ".date('H:i',$v['published_time']);
                 $newNewsList[$k]['user_nickname']=$userInfo['user_nickname'];
-                $newNewsList[$k]['avatar']=config('img_url').'/upload/'.$userInfo['avatar'];
+                if(!empty($userInfo['avatar'])){
+                    if(strpos($userInfo['avatar'],'http')!==false){
+                        $avatar=$userInfo['avatar'];
+                    }else{
+                        $avatar=config('img_url').'/upload/'.$userInfo['avatar'];
+                    }
+                }else{
+                    $avatar=config('default_avatar');
+                }
+                $newNewsList[$k]['avatar']=$avatar;
+
 
                 $newNewsList[$k]['post_content']=htmlspecialchars_decode($v['post_content']);
                 $img_data = $this->_gPicUrl(htmlspecialchars_decode($v['post_content']));
                 if (!empty($img_data)) {
                     $img_replace_array = array();
                     for ($i = 0; $i < count($img_data); $i++) {
+                        if(strpos($img_data[$i],'http')!==false){
+                            $new='src="'. $img_data[$i] . '"';
+                        }else{
+                            $new='src="'.config('img_url') . '/upload/' . $img_data[$i] . '"';
+                        }
+
                         // 放到替换数组
                         array_push($img_replace_array, array(
                             'old' => 'src="' . $img_data[$i] . '"',
-                            'new' => 'src="'.config('img_url') . '/upload/' . $img_data[$i] . '"'
+                            'new' => $new
                         ));
                     }
                     // 替换图片
@@ -442,16 +502,8 @@ class TemplateController extends AdminBaseController
                 if(!is_dir($htmlPath))
                     mkdir($htmlPath,0777,true);
 
-                if($k==0){
-                    $prevData=$newNewsList[$k];
-                    $nextData=$newNewsList[$k+1];
-                }else if($k==count($newNewsList)-1){
-                    $prevData=$newNewsList[$k-1];
-                    $nextData=end($newNewsList);
-                }else{
-                    $prevData=$newNewsList[$k-1];
-                    $nextData=$newNewsList[$k+1];
-                }
+                $prevData=isset($newNewsList[$k-1])?$newNewsList[$k-1]:['post_title'=>'','url'=>''];
+                $nextData=isset($newNewsList[$k+1])?$newNewsList[$k+1]:['post_title'=>'','url'=>''];
 
                 //相关标签
                 $tagIDArr=$this->portal_tag_post->where(['post_id'=>$v['id'],'status'=>1])->column('tag_id');

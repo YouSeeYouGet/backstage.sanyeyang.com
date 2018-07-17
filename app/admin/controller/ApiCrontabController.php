@@ -17,10 +17,11 @@ class ApiCrontabController extends AdminBaseController
 
     /**
      * 爬虫脚本
-     *   1 Web开发
-     *   2 系统运维
-     *   3 数据库
-     *   4 开发工具
+     *   1 Web开发 PHP Html/css JavaScript JQuery XML
+     *   2 系统服务器 Linux nginx apache lnmp一键安装包
+     *   3 数据库  Mysql
+     *   4 项目管理 git svn
+     *   5 心情随笔
      */
     public function grabnews(){
 
