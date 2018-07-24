@@ -36,7 +36,6 @@ class AssetController extends AdminBaseController
     public function webuploader()
     {
         if ($this->request->isPost()) {
-
             $uploader = new Upload();
 
             $result = $uploader->upload();
