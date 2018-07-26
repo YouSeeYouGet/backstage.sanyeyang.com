@@ -50,12 +50,6 @@
             <button class="btn btn-primary btn-sm js-ajax-submit" type="submit"
                     data-action="{:url('AdminArticle/recommend',array('no'=>1))}" data-subcheck="true">取消推荐
             </button>
-            <!--
-            <notempty name="category">
-                <button class="btn btn-primary btn-sm js-articles-move" type="button">批量移动</button>
-            </notempty>
-            <button class="btn btn-primary btn-sm js-articles-copy" type="button">批量复制</button>
-            -->
             <button class="btn btn-danger btn-sm js-ajax-submit" type="submit"
                     data-action="{:url('AdminArticle/delete')}" data-subcheck="true" data-msg="您确定删除吗？">
                 {:lang('DELETE')}
@@ -88,32 +82,23 @@
             <foreach name="articles" item="vo">
                 <tr>
                     <td>
-                        <input type="checkbox" class="js-check" data-yid="js-check-y" data-xid="js-check-x" name="ids[]"
-                               value="{$vo.id}" title="ID:{$vo.id}">
+                        <input type="checkbox" class="js-check" data-yid="js-check-y" data-xid="js-check-x" name="ids[]" value="{$vo.id}" title="ID:{$vo.id}">
                     </td>
                     <notempty name="category">
                         <td>
-                            <input name="list_orders[{$vo.post_category_id}]" class="input-order" type="text"
-                                   value="{$vo.list_order}">
+                            <input name="list_orders[{$vo.post_category_id}]" class="input-order" type="text"  value="{$vo.list_order}">
                         </td>
                     </notempty>
                     <td><b>{$vo.id}</b></td>
                     <td>
-                        <notempty name="category">
-                            <a href="{:cmf_url('portal/Article/index',array('id'=>$vo['id'],'cid'=>$vo['category_id']))}"
-                               target="_blank">{$vo.post_title}</a>
-                            <else/>
-                            <a href="{:cmf_url('portal/Article/index',array('id'=>$vo['id']))}"
-                               target="_blank">{$vo.post_title}</a>
-                        </notempty>
+                        <a href="{$server_name}/post/{$vo.idNum}.html" target="_blank">{$vo.post_title}</a>
                     </td>
                     <td>
                         <foreach name="vo.categories" item="voo">
                             <span class="label label-default">
-                                <a href="{:cmf_url('portal/List/index',array('id'=>$voo['id']))}"
-                                   style="color: #fff;"
-                                   target="_blank"
-                                >{$voo.name}</a>
+                                <a href="{$server_name}/post/category/{$voo.name}" style="color: #fff;" target="_blank">
+                                    {$voo.name}
+                                </a>
                             </span>&nbsp;
                         </foreach>
                     </td>
@@ -122,7 +107,6 @@
                     <td>
                         <notempty name="vo.comment_count">
                             {$vo.comment_count|default='0'}
-                            <!--<a href="javascript:parent.openIframeDialog('{:url('comment/commentadmin/index',array('post_id'=>$vo['id']))}','评论列表')">{$vo.comment_count}</a>-->
                             <else/>
                             {$vo.comment_count|default='0'}
                         </notempty>

@@ -46,10 +46,20 @@ class AdminArticleController extends AdminBaseController
         $portalCategoryModel = new PortalCategoryModel();
         $categoryTree        = $portalCategoryModel->adminCategoryTree($categoryId);
 
+        $articlesList=$data->items();
+        foreach($articlesList as $k=>$v){
+            if($v['id']<10000){
+                $idNum=str_pad($v['id'],5,"0",STR_PAD_LEFT);
+            }else{
+                $idNum=$v['id'];
+            }
+            $articlesList[$k]['idNum']=$idNum;
+        }
+
         $this->assign('start_time', isset($param['start_time']) ? $param['start_time'] : '');
         $this->assign('end_time', isset($param['end_time']) ? $param['end_time'] : '');
         $this->assign('keyword', isset($param['keyword']) ? $param['keyword'] : '');
-        $this->assign('articles', $data->items());
+        $this->assign('articles', $articlesList);
         $this->assign('category_tree', $categoryTree);
         $this->assign('category', $categoryId);
         $this->assign('page', $data->render());
@@ -218,7 +228,6 @@ class AdminArticleController extends AdminBaseController
             hook('portal_admin_after_save_article', $hookParam);
 
             $this->success('保存成功!');
-
         }
     }
 
@@ -239,6 +248,7 @@ class AdminArticleController extends AdminBaseController
     {
         $param           = $this->request->param();
         $portalPostModel = new PortalPostModel();
+        $server_root=config('server_root');
 
         if (isset($param['id'])) {
             $id           = $this->request->param('id', 0, 'intval');
@@ -253,11 +263,20 @@ class AdminArticleController extends AdminBaseController
             $resultPortal = $portalPostModel
                 ->where(['id' => $id])
                 ->update(['delete_time' => time()]);
-            if ($resultPortal) {
+            if ($resultPortal!==false) {
                 Db::name('portal_category_post')->where(['post_id'=>$id])->update(['status'=>0]);
                 Db::name('portal_tag_post')->where(['post_id'=>$id])->update(['status'=>0]);
-
                 Db::name('recycleBin')->insert($data);
+
+                if($id<10000){
+                    $idNum=str_pad($id,5,"0",STR_PAD_LEFT);
+                }else{
+                    $idNum=$id;
+                }
+
+                $file='../../'.$server_root.'/post/'.$idNum.'.html';
+                if(@file_exists($file))
+                    unlink($file);
             }
             $this->success("删除成功！", '');
 

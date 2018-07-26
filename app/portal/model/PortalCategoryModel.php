@@ -75,9 +75,10 @@ class PortalCategoryModel extends Model
         }
 
         $newCategories = [];
+        $server_name=config('server_name');
         foreach ($categories as $item) {
             $item['checked'] = in_array($item['id'], $currentIds) ? "checked" : "";
-            $item['url']     = cmf_url('portal/List/index', ['id' => $item['id']]);;
+            $item['url']     = $server_name.'/post/category/'.$item['name'];
             $item['str_action'] = '<a href="' . url("AdminCategory/add", ["parent" => $item['id']]) . '">添加子分类</a>  <a href="' . url("AdminCategory/edit", ["id" => $item['id']]) . '">' . lang('EDIT') . '</a>  <a class="js-ajax-delete" href="' . url("AdminCategory/delete", ["id" => $item['id']]) . '">' . lang('DELETE') . '</a> ';
             array_push($newCategories, $item);
         }

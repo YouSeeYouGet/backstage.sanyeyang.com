@@ -88,33 +88,6 @@
                         </td>
                     </tr>
                     <tr>
-                        <th>相册</th>
-                        <td>
-                            <ul id="photos" class="pic-list list-unstyled form-inline">
-                                <notempty name="post.more.photos">
-                                    <foreach name="post.more.photos" item="vo">
-                                        <php>$img_url=cmf_get_image_preview_url($vo['url']);</php>
-                                        <li id="saved-image{$key}">
-                                            <input id="photo-{$key}" type="hidden" name="photo_urls[]"
-                                                   value="{$vo.url}">
-                                            <input class="form-control" id="photo-{$key}-name" type="text"
-                                                   name="photo_names[]"
-                                                   value="{$vo.name|default=''}" style="width: 200px;" title="图片名称">
-                                            <img id="photo-{$key}-preview"
-                                                 src="{:cmf_get_image_preview_url($vo['url'])}"
-                                                 style="height:36px;width: 36px;"
-                                                 onclick="parent.imagePreviewDialog(this.src);">
-                                            <a href="javascript:uploadOneImage('图片上传','#photo-{$key}');">替换</a>
-                                            <a href="javascript:(function(){$('#saved-image{$key}').remove();})();">移除</a>
-                                        </li>
-                                    </foreach>
-                                </notempty>
-                            </ul>
-                            <a href="javascript:uploadMultiImage('图片上传','#photos','photos-item-tpl');"
-                               class="btn btn-sm btn-default">选择图片</a>
-                        </td>
-                    </tr>
-                    <tr>
                         <th>附件</th>
                         <td>
                             <ul id="files" class="pic-list list-unstyled form-inline">
@@ -174,17 +147,6 @@
                                    value="{:date('Y-m-d H:i',$post['published_time'])}">
                         </td>
                     </tr>
-                    <!--
-                    <tr>
-                        <th>评论</th>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label style="width: 88px"><a
-                                    href="javascript:openIframeDialog('{:url('comment/commentadmin/index',array('post_id'=>$post['id']))}','评论列表')">查看评论</a></label>
-                        </td>
-                    </tr>
-                    -->
                     <tr>
                         <th>状态</th>
                         <php>
@@ -216,20 +178,6 @@
                                     <input type="checkbox" name="post[recommended]" value="1" {$recommended_yes}>推荐
                                 </label>
                             </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>文章模板</th>
-                    </tr>
-                    <tr>
-                        <td>
-                            <select class="form-control" name="post[more][template]" id="more-template-select">
-                                <option value="">请选择模板</option>
-                                <foreach name="article_theme_files" item="vo">
-                                    <php>$value=preg_replace('/^portal\//','',$vo['file']);</php>
-                                    <option value="{$value}">{$vo.name} {$vo.file}.html</option>
-                                </foreach>
-                            </select>
                         </td>
                     </tr>
                 </table>
