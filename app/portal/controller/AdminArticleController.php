@@ -37,6 +37,7 @@ class AdminArticleController extends AdminBaseController
         $param = $this->request->param();
 
         $categoryId = $this->request->param('category', 0, 'intval');
+        $post_status = $this->request->param('post_status');
 
         $postService = new PostService();
         $data        = $postService->adminArticleList($param);
@@ -62,8 +63,8 @@ class AdminArticleController extends AdminBaseController
         $this->assign('articles', $articlesList);
         $this->assign('category_tree', $categoryTree);
         $this->assign('category', $categoryId);
+        $this->assign('post_status',$post_status);
         $this->assign('page', $data->render());
-
 
         return $this->fetch();
     }
@@ -361,7 +362,7 @@ class AdminArticleController extends AdminBaseController
         if (isset($param['ids']) && isset($param["yes"])) {
             $ids = $this->request->param('ids/a');
 
-            $portalPostModel->where(['id' => ['in', $ids]])->update(['is_top' => 1]);
+            $portalPostModel->where(['id' => ['in', $ids]])->update(['is_top' => 1,'top_time'=>time()]);
 
             $this->success("置顶成功！", '');
 
@@ -370,7 +371,7 @@ class AdminArticleController extends AdminBaseController
         if (isset($_POST['ids']) && isset($param["no"])) {
             $ids = $this->request->param('ids/a');
 
-            $portalPostModel->where(['id' => ['in', $ids]])->update(['is_top' => 0]);
+            $portalPostModel->where(['id' => ['in', $ids]])->update(['is_top' => 0,'top_time'=>0]);
 
             $this->success("取消置顶成功！", '');
         }

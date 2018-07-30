@@ -287,6 +287,7 @@ tpl;
             ->update(['delete_time' => time()]);
         if ($result) {
             Db::name('recycleBin')->insert($data);
+            Db::name('grab_tag')->where(['category_id'=>$id])->delete();
             $this->success('删除成功!');
         } else {
             $this->error('删除失败');

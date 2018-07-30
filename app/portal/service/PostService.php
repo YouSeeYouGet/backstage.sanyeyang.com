@@ -66,6 +66,10 @@ class PostService
             $where['a.post_title'] = ['like', "%$keyword%"];
         }
 
+        if(isset($filter['post_status'])&&$filter['post_status']!=''){
+            $where['a.post_status']=['eq',$filter['post_status']];
+        }
+
         if ($isPage) {
             $where['a.post_type'] = 2;
         } else {

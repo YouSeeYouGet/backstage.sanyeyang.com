@@ -79,9 +79,9 @@ class TemplateController extends AdminBaseController
     private function _create_index()
     {
         //最新发布
-        $newNewsList=$this->portal_post->where(['post_status'=>1,'delete_time'=>0])->order('is_top desc,published_time desc')->select();
+        $newNewsList=$this->portal_post->where(['post_status'=>1,'delete_time'=>0])->order('is_top desc,top_time desc,published_time desc')->select();
         $newNewsList = $newNewsList->toArray();
-        $newNewsCount=$this->portal_post->where(['post_status'=>1,'delete_time'=>0])->order('is_top desc,published_time desc')->count();
+        $newNewsCount=$this->portal_post->where(['post_status'=>1,'delete_time'=>0])->order('is_top desc,top_time desc,published_time desc')->count();
         if($newNewsCount>0){
             foreach ($newNewsList as $k => $v) {
                 if($v['id']<10000){
@@ -193,10 +193,10 @@ class TemplateController extends AdminBaseController
                 $nav_href=implode('/',$navHrefArr);
                 $categoryInfo=$this->portal_category->where(['name'=>$v['name'],'delete_time'=>0,'status'=>1])->find();
                 $postIDArr=$this->portal_category_post->where(['category_id'=>$categoryInfo['id'],'status'=>1])->column('post_id');
-                $newNewsList=$this->portal_post->where(['post_status'=>1,'delete_time'=>0,'id'=>['in',$postIDArr]])->order('is_top desc,published_time desc')->select();
+                $newNewsList=$this->portal_post->where(['post_status'=>1,'delete_time'=>0,'id'=>['in',$postIDArr]])->order('is_top desc,top_time desc,published_time desc')->select();
                 $newNewsList = $newNewsList->toArray();
 
-                $newNewsCount=$this->portal_post->where(['post_status'=>1,'delete_time'=>0,'id'=>['in',$postIDArr]])->order('is_top desc,published_time desc')->count();
+                $newNewsCount=$this->portal_post->where(['post_status'=>1,'delete_time'=>0,'id'=>['in',$postIDArr]])->order('is_top desc,top_time desc,published_time desc')->count();
                 if($newNewsCount>0){
                     foreach ($newNewsList as $k1 => $v1) {
                         if($v1['id']<10000){
@@ -314,10 +314,10 @@ class TemplateController extends AdminBaseController
                 $tag_href='/post/tag/'.$name;
 
                 $postIDArr=$this->portal_tag_post->where(['tag_id'=>$v['id'],'status'=>1])->column('post_id');
-                $newNewsList=$this->portal_post->where(['post_status'=>1,'delete_time'=>0,'id'=>['in',$postIDArr]])->order('is_top desc,published_time desc')->select();
+                $newNewsList=$this->portal_post->where(['post_status'=>1,'delete_time'=>0,'id'=>['in',$postIDArr]])->order('is_top desc,top_time desc,published_time desc')->select();
                 $newNewsList = $newNewsList->toArray();
 
-                $newNewsCount=$this->portal_post->where(['post_status'=>1,'delete_time'=>0,'id'=>['in',$postIDArr]])->order('is_top desc,published_time desc')->count();
+                $newNewsCount=$this->portal_post->where(['post_status'=>1,'delete_time'=>0,'id'=>['in',$postIDArr]])->order('is_top desc,top_time desc,published_time desc')->count();
                 if($newNewsCount>0){
                     foreach ($newNewsList as $k1 => $v1) {
                         if($v1['id']<10000){
@@ -433,7 +433,7 @@ class TemplateController extends AdminBaseController
      */
     private function _create_news_detail()
     {
-        $newNewsList=$this->portal_post->where(['post_status'=>1,'delete_time'=>0])->order('is_top desc,published_time desc')->select();
+        $newNewsList=$this->portal_post->where(['post_status'=>1,'delete_time'=>0])->order('is_top desc,top_time desc,published_time desc')->select();
         $newNewsList = $newNewsList->toArray();
         if(count($newNewsList)>0){
             foreach ($newNewsList as $k => $v) {
@@ -517,7 +517,7 @@ class TemplateController extends AdminBaseController
                 //相关文章
                 $portalTagInfo=$this->portal_tag_post->where(['post_id'=>$v['id']])->find();
                 $postIDArr=$this->portal_tag_post->where(['tag_id'=>$portalTagInfo['tag_id'],'status'=>1])->column('post_id');
-                $postList=$this->portal_post->where(['post_status'=>1,'delete_time'=>0,'id'=>['in',$postIDArr]])->order('is_top desc,published_time desc')->limit(10)->select();
+                $postList=$this->portal_post->where(['post_status'=>1,'delete_time'=>0,'id'=>['in',$postIDArr]])->order('is_top desc,top_time desc,published_time desc')->limit(10)->select();
                 $postList = $postList->toArray();
                 foreach($postList as $k2=>$v2){
                     if($v2['id']<10000){

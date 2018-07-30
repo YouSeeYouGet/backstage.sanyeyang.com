@@ -21,3 +21,17 @@ function getStrTime($time){
         return "晚上";
     }
 }
+
+
+/**
+ * 提取图片
+ * @param $content
+ * @return bool|int
+ */
+function gPicUrl($content)
+{
+    $pattern = '/src=\"([\s\S]+?)\"/';//正则
+    $result = preg_match_all($pattern, $content, $match);//匹配图片
+    $result = empty($result) ? false : $match[1];//返回所有图片的路径
+    return $result;
+}
