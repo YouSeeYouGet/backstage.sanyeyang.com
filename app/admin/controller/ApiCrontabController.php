@@ -12,16 +12,59 @@ use tree\Tree;
 class ApiCrontabController extends AdminBaseController
 {
     public function _initialize(){
+        set_time_limit(0);
+    }
 
+    public function updateFabu(){
+        $postList=Db::name('portal_post')->where(['delete_time'=>0,'post_status'=>0])->select();
+        $postList=$postList->toArray();
+        $time=time();
+        foreach($postList as $k=>$v){
+            $picId=rand(1,953);
+            $picInfo=Db::name('pic')->where(['id'=>$picId])->find();
+            $thumbnail=$picInfo['img'];
+            $more=json_encode(['thumbnail'=>$thumbnail, 'template'=>'']);
+            $published_time=rand(1514736000,$time);
+            Db::name('portal_post')->where(['id'=>$v['id']])->update([
+                'more'=>$more,
+                'post_status'=>1,
+                'published_time'=>$published_time
+            ]);
+        }
+        exit;
+    }
+
+    /**
+     * 爬取壁纸
+     */
+    public function grab_pic(){
+        set_time_limit(0);
+        $picModel=Db::name('pic');
+        $picTypeList=Db::name('pic_type')->where(['is_status'=>1])->field('id,name')->select();
+        $picTypeList=$picTypeList->toArray();
+        foreach($picTypeList as $k=>$v){
+            $json=file_get_contents('http://wallpaper.apc.360.cn/index.php?c=WallPaper&a=search&start=0&count=200&kw='.$v['name']);
+            $list=json_decode($json,true);
+            if($list['errno']>0)
+                continue;
+
+            $filepath='upload/pic/'.md5($v['name']).'/';
+            if(!file_exists($filepath)){
+                mkdir($filepath,0777,true);
+            }
+            foreach($list['data'] as $k1=>$v1){
+                $this->resizejpg($v1['url'],md5($v1['id']).'.jpg',700,350,$filepath);
+                $picModel->insert([
+                    'img'=>$filepath.md5($v1['id']).'.jpg',
+                    'pic_type_id'=>$v['id']
+                ]);
+            }
+        }
+        exit;
     }
 
     /**
      * 爬虫脚本
-     *   1 Web开发 PHP Html/css JavaScript JQuery XML
-     *   2 系统服务器 Linux nginx apache lnmp一键安装包
-     *   3 数据库  Mysql
-     *   4 项目管理 git svn
-     *   5 心情随笔
      */
     public function grab(){
         set_time_limit(0);
@@ -46,7 +89,6 @@ class ApiCrontabController extends AdminBaseController
             $post_status=$is_top=0;
             $create_time=$update_time=time();
             $post_source='伯乐在线';
-            $imgArr=gPicUrl($content);
             $urlArr=[];
             if(preg_match_all('/<a target="_blank" class="archive-title".*<\/a>/im', $content,$list)){
                 for($i=0;$i<count($list[0]);$i++){
@@ -88,7 +130,11 @@ class ApiCrontabController extends AdminBaseController
 
                 $post_title=$postTitleArr[$i];
                 $post_content=htmlspecialchars($post_content);
-                $thumbnail=isset($imgArr[$i])?$imgArr[$i]:'';
+
+
+                $picId=rand(1,953);
+                $picInfo=Db::name('pic')->where(['id'=>$picId])->find();
+                $thumbnail=$picInfo['img'];
                 $more=json_encode(['thumbnail'=>$thumbnail, 'template'=>'']);
 
                 $portalPostInfo=Db::name('portal_post')->where(['delete_time'=>0,'post_title'=>$post_title])->find();
@@ -140,14 +186,14 @@ class ApiCrontabController extends AdminBaseController
     }
 
     /**
-     * 心情随笔
+     * 最新文章
      */
     public function grab_essay(){
         set_time_limit(0);
         include_once '../simplewind/vendor/querylist/QueryList.class.php';
 
         $source= array("content"=>array(".grid-8","html"));
-        $obj = new \QueryList('http://blog.jobbole.com/category/career/',$source);
+        $obj = new \QueryList('http://blog.jobbole.com/all-posts/',$source);
         $data = $obj->jsonArr;
         if(empty($data[0]['content']))
             exit;
@@ -163,7 +209,6 @@ class ApiCrontabController extends AdminBaseController
         $create_time=$update_time=time();
         $post_source='伯乐在线';
 
-        $imgArr=gPicUrl($content);
         if(preg_match_all('/<a target="_blank" class="archive-title".*<\/a>/im', $content,$list)){
             for($i=0;$i<count($list[0]);$i++){
                 if (preg_match("/href=\"([^\"]+)/", $list[0][$i], $href)){
@@ -204,7 +249,10 @@ class ApiCrontabController extends AdminBaseController
 
             $post_title=$postTitleArr[$i];
             $post_content=htmlspecialchars($post_content);
-            $thumbnail=isset($imgArr[$i])?$imgArr[$i]:'';
+
+            $picId=rand(1,953);
+            $picInfo=Db::name('pic')->where(['id'=>$picId])->find();
+            $thumbnail=$picInfo['img'];
             $more=json_encode(['thumbnail'=>$thumbnail, 'template'=>'']);
 
             $portalPostInfo=Db::name('portal_post')->where(['delete_time'=>0,'post_title'=>$post_title])->find();
@@ -233,23 +281,6 @@ class ApiCrontabController extends AdminBaseController
                         'category_id'=>$category_id,
                         'status'=>1
                     ]);
-
-                $tagInfo=Db::name('portal_tag')->where(['status'=>1,'name'=>'职场'])->find();
-                if(empty($tagInfo)){
-                    $tagID=Db::name('portal_tag')->insertGetId([
-                        'status'=>1,
-                        'name'=>'职场'
-                    ]);
-                    if(!empty($tagID)){
-                        $tagPostInfo=Db::name('portal_tag_post')->where(['tag_id'=>$tagID,'post_id'=>$portalPostID,'status'=>1])->find();
-                        if(empty($tagPostInfo))
-                            Db::name('portal_tag_post')->insertGetId([
-                                'tag_id'=>$tagID,
-                                'post_id'=>$portalPostID,
-                                'status'=>1
-                            ]);
-                    }
-                }
             }
         }
         exit;
@@ -260,7 +291,7 @@ class ApiCrontabController extends AdminBaseController
      */
     public function push_baidu(){
         $portal_post=Db::name('portal_post');
-        $postIDArr=$portal_post->where(['post_status'=>1,'is_push'=>0,'delete_time'=>0])->limit(10)->column('id');
+        $postIDArr=$portal_post->where(['post_status'=>1,'is_push'=>0,'delete_time'=>0])->column('id');
         if(empty($postIDArr))
             exit;
 
@@ -294,5 +325,30 @@ class ApiCrontabController extends AdminBaseController
             }
         }
         exit;
+    }
+
+
+
+    /**
+     * 更改图片大小
+     * @param $imgsrc
+     * @param $imgdst
+     * @param $imgwidth
+     * @param $imgheight
+     * @return bool
+     */
+    public function resizejpg($imgsrc, $imgdst, $imgwidth, $imgheight,$filepath)
+    {
+        $arr = getimagesize($imgsrc);
+        header("Content-type: image/jpg");
+        $imgWidth = $imgwidth;
+        $imgHeight = $imgheight;
+        $imgsrc = imagecreatefromjpeg($imgsrc);
+        $image = imagecreatetruecolor($imgWidth, $imgHeight);
+        imagecopyresampled($image, $imgsrc, 0, 0, 0, 0, $imgWidth, $imgHeight, $arr[0], $arr[1]);
+        $file =$filepath. $imgdst;
+        imagejpeg($image, $file);
+        imagedestroy($image);
+        return true;
     }
 }

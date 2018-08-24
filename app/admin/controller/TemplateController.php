@@ -155,9 +155,6 @@ class TemplateController extends AdminBaseController
                 if(($t+3)>$pageNum)
                     $t4='style="display:none"';
 
-                if(($t+4)>$pageNum)
-                    $t5='style="display:none"';
-
                 $page='
                     <div class="pagebar">
                         <a href="'.config('server_name').'" title="首页">首页</a>
@@ -165,8 +162,8 @@ class TemplateController extends AdminBaseController
                         <a href="'.config('server_name').'/page/'.$t.'" title="第'.$t.'页"  class="this-page">'.$t.'</a>
                         <a href="'.config('server_name').'/page/'.($t+1).'" title="第'.($t+1).'页" '.$t2.'>'.($t+1).'</a>
                         <a href="'.config('server_name').'/page/'.($t+2).'" title="第'.($t+2).'页" '.$t3.'>'.($t+2).'</a>
+
                         <a href="'.config('server_name').'/page/'.($t+3).'" title="第'.($t+3).'页" '.$t4.'>'.($t+3).'</a>
-                        <a href="'.config('server_name').'/page/'.($t+4).'" title="第'.($t+4).'页" '.$t5.'>'.($t+4).'</a>
                         <a href="'.config('server_name').'/page/'.$nextPage.'" title="下一页">>></a>
                         <a href="'.config('server_name').'/page/'.$pageNum.'" title="尾页">尾页</a>
                     </div>
@@ -272,10 +269,6 @@ class TemplateController extends AdminBaseController
                         if(($t+3)>$pageNum)
                             $t4='style="display:none"';
 
-                        if(($t+4)>$pageNum)
-                            $t5='style="display:none"';
-
-
                         $page='
                             <div class="pagebar">
                                 <a href="'.config('server_name').$nav_href.'" title="首页">首页</a>
@@ -284,7 +277,6 @@ class TemplateController extends AdminBaseController
                                 <a href="'.config('server_name').$nav_href.'/page/'.($t+1).'" title="第'.($t+1).'页" '.$t2.'>'.($t+1).'</a>
                                 <a href="'.config('server_name').$nav_href.'/page/'.($t+2).'" title="第'.($t+2).'页" '.$t3.'>'.($t+2).'</a>
                                 <a href="'.config('server_name').$nav_href.'/page/'.($t+3).'" title="第'.($t+3).'页" '.$t4.'>'.($t+3).'</a>
-                                <a href="'.config('server_name').$nav_href.'/page/'.($t+4).'" title="第'.($t+4).'页" '.$t5.'>'.($t+4).'</a>
                                 <a href="'.config('server_name').$nav_href.'/page/'.$nextPage.'" title="下一页">>></a>
                                 <a href="'.config('server_name').$nav_href.'/page/'.$pageNum.'" title="尾页">尾页</a>
                             </div>
@@ -400,9 +392,6 @@ class TemplateController extends AdminBaseController
                         if(($t+3)>$pageNum)
                             $t4='style="display:none"';
 
-                        if(($t+4)>$pageNum)
-                            $t5='style="display:none"';
-
                         $page='
                             <div class="pagebar" '.$pageStyle.'>
                                 <a href="'.config('server_name').$tag_href.'" title="首页">首页</a>
@@ -411,7 +400,6 @@ class TemplateController extends AdminBaseController
                                 <a href="'.config('server_name').$tag_href.'/page/'.($t+1).'" title="第'.($t+1).'页" '.$t2.'>'.($t+1).'</a>
                                 <a href="'.config('server_name').$tag_href.'/page/'.($t+2).'" title="第'.($t+2).'页" '.$t3.'>'.($t+2).'</a>
                                 <a href="'.config('server_name').$tag_href.'/page/'.($t+3).'" title="第'.($t+3).'页" '.$t4.'>'.($t+3).'</a>
-                                <a href="'.config('server_name').$tag_href.'/page/'.($t+4).'" title="第'.($t+4).'页" '.$t5.'>'.($t+4).'</a>
                                 <a href="'.config('server_name').$tag_href.'/page/'.$nextPage.'" title="下一页">>></a>
                                 <a href="'.config('server_name').$tag_href.'/page/'.$pageNum.'" title="尾页">尾页</a>
                             </div>
@@ -471,14 +459,23 @@ class TemplateController extends AdminBaseController
                 }
                 $newNewsList[$k]['avatar']=$avatar;
 
+                //处理多余Html标签
+                $newNewsList[$k]['post_content']=$this->dealHtmlTag($v['post_content']);
 
-                $newNewsList[$k]['post_content']=htmlspecialchars_decode($v['post_content']);
+                //处理图片
                 $img_data = $this->_gPicUrl(htmlspecialchars_decode($v['post_content']));
                 if (!empty($img_data)) {
                     $img_replace_array = array();
                     for ($i = 0; $i < count($img_data); $i++) {
                         if(strpos($img_data[$i],'http')!==false){
-                            $new='src="'. $img_data[$i] . '"';
+                            //外部链接
+                            if(strpos($img_data[$i],'http://jbcdn2.b0.upaiyun.com')!==false){
+                                $picId=rand(1,953);
+                                $picInfo=Db::name('pic')->where(['id'=>$picId])->find();
+                                $new='src="'.config('img_url') . '/upload/' . $picInfo['img'] . '"';
+                            }else{
+                                $new='src="'. $img_data[$i] . '"';
+                            }
                         }else{
                             $new='src="'.config('img_url') . '/upload/' . $img_data[$i] . '"';
                         }
@@ -495,6 +492,7 @@ class TemplateController extends AdminBaseController
                     }
                 }
                 $newNewsList[$k]['post_content']=htmlspecialchars_decode($newNewsList[$k]['post_content']);
+
             }
 
             foreach($newNewsList as $k=>$v){
@@ -557,8 +555,42 @@ class TemplateController extends AdminBaseController
         return $content;
     }
 
-    //提取图片
-    private function _gPicUrl($content)
+    /**
+     * 处理Html标签
+     * @param $postContent
+     * @return mixed|string
+     */
+    protected function dealHtmlTag($postContent){
+        if(empty($postContent))
+            return $postContent;
+        $postContent=htmlspecialchars_decode($postContent);
+        preg_match_all('%<div class="copyright-area">(.*?)</div>%si', $postContent, $search1);
+        $postContent = str_replace($search1[0], '', $postContent);
+
+        preg_match_all('%<blockquote class="rewards">(.*?)</blockquote>%si', $postContent, $search2);
+        $postContent = str_replace($search2[0], '', $postContent);
+
+        preg_match_all('%<div id="rewardbox">(.*?)</div>%si', $postContent, $search3);
+        $postContent = str_replace($search3[0], '', $postContent);
+
+        preg_match_all('%<div class="post-adds">(.*?)</div>%si', $postContent, $search4);
+        $postContent = str_replace($search4[0], '', $postContent);
+
+        preg_match_all('%<div id="author-bio">(.*?)</div>%si', $postContent, $search5);
+        $postContent = str_replace($search5[0], '', $postContent);
+
+        preg_match_all('%<div class="author-bio-info">(.*?)</div>%si', $postContent, $search6);
+        $postContent = str_replace($search6[0], '', $postContent);
+        return $postContent;
+    }
+
+
+    /**
+     * 提取图片
+     * @param $content
+     * @return bool|int
+     */
+    protected function _gPicUrl($content)
     {
         $pattern = '/src=\"([\s\S]+?)\"/';//正则
         $result = preg_match_all($pattern, $content, $match);//匹配图片

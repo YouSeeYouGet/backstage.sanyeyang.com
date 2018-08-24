@@ -334,7 +334,7 @@ class AdminArticleController extends AdminBaseController
         if (isset($param['ids']) && isset($param["no"])) {
             $ids = $this->request->param('ids/a');
 
-            $portalPostModel->where(['id' => ['in', $ids]])->update(['post_status' => 0]);
+            $portalPostModel->where(['id' => ['in', $ids]])->update(['post_status' => 0,'published_time'=>0]);
 
             $this->success("取消发布成功！", '');
         }
@@ -440,6 +440,16 @@ class AdminArticleController extends AdminBaseController
     public function copy()
     {
 
+    }
+
+    public function updatePost(){
+        $postList=Db::name('portal_post')->select();
+        $postList=$postList->toArray();
+        foreach($postList as $k=>$v){
+            $post_keywords = str_replace('，', ',', $v['post_keywords']);
+            $keywords = explode(',', $post_keywords);
+            $this->addTags($keywords, $v['id']);
+        }
     }
 
 
