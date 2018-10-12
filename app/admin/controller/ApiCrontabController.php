@@ -18,13 +18,13 @@ class ApiCrontabController extends AdminBaseController
     public function updateFabu(){
         $postList=Db::name('portal_post')->where(['delete_time'=>0,'post_status'=>0])->select();
         $postList=$postList->toArray();
-        $time=time();
+        $startTime=time()-(30*24*3600);
         foreach($postList as $k=>$v){
             $picId=rand(1,953);
             $picInfo=Db::name('pic')->where(['id'=>$picId])->find();
             $thumbnail=$picInfo['img'];
             $more=json_encode(['thumbnail'=>$thumbnail, 'template'=>'']);
-            $published_time=rand(1514736000,$time);
+            $published_time=rand($startTime,time());
             Db::name('portal_post')->where(['id'=>$v['id']])->update([
                 'more'=>$more,
                 'post_status'=>1,
@@ -291,7 +291,7 @@ class ApiCrontabController extends AdminBaseController
      */
     public function push_baidu(){
         $portal_post=Db::name('portal_post');
-        $postIDArr=$portal_post->where(['post_status'=>1,'is_push'=>0,'delete_time'=>0])->column('id');
+        $postIDArr=$portal_post->where(['post_status'=>1,'is_push'=>0,'delete_time'=>0])->limit(10)->column('id');
         if(empty($postIDArr))
             exit;
 
@@ -326,8 +326,6 @@ class ApiCrontabController extends AdminBaseController
         }
         exit;
     }
-
-
 
     /**
      * 更改图片大小
